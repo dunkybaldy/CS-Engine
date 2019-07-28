@@ -6,7 +6,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System.Threading.Tasks;
 
-namespace ConsoleApp
+namespace ExampleGame
 {
     public class Game1 : GameApplication
     {

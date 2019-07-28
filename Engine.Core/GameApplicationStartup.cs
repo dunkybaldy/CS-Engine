@@ -15,7 +15,6 @@ namespace Engine.Core
         public static IServiceCollection ConfigureServices(this IServiceCollection services)
         {
             services
-                .AddSingleton<Game, GameApplication>()
                 .AddSingleton<GraphicsDeviceManager>();
             return services;
         }

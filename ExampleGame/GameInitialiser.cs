@@ -1,4 +1,4 @@
-﻿namespace ConsoleApp
+﻿namespace ExampleGame
 {
     public static class GameInitialiser
     {

@@ -35,5 +35,11 @@ namespace Engine.Core.Tests.Managers
 
             exceptionThrown.Should().BeTrue();
         }
+
+        [Test]
+        public void UpdateAllEntities()
+        {
+
+        }
     }
 }

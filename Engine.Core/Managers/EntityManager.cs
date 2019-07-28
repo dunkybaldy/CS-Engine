@@ -2,11 +2,13 @@
 using Engine.Core.Managers.Interfaces;
 using Engine.Core.Models.Enums;
 using Engine.Core.Models.Interfaces;
+using Microsoft.Extensions.Logging;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -16,12 +18,16 @@ namespace Engine.Core.Managers
     public class EntityManager : IEntityManager
     {
         private readonly IEntityFactory _entityFactory;
+        private readonly ILogger<EntityManager> _logger;
+        private readonly Stopwatch _stopwatch;
 
         private ConcurrentDictionary<string, IEntity> Entities { get; set; }
 
-        public EntityManager(IEntityFactory entityFactory)
+        public EntityManager(IEntityFactory entityFactory, ILogger<EntityManager> logger, Stopwatch stopwatch)
         {
             _entityFactory = entityFactory ?? throw new ArgumentNullException(nameof(entityFactory));
+            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            _stopwatch = stopwatch ?? throw new ArgumentNullException(nameof(stopwatch));
 
             Entities = new ConcurrentDictionary<string, IEntity>();
         }
@@ -50,6 +56,7 @@ namespace Engine.Core.Managers
 
         public async Task<List<IEntity>> UpdateEntities(GameTime gameTime)
         {
+            var now = _stopwatch.ElapsedMilliseconds;
             var updatableEntities = Entities.Where(x => x.Value.EntityLifeCycleAction() != EntityActions.DRAW).ToList();
 
             List<Task> updateTasks = new List<Task>();
@@ -57,11 +64,14 @@ namespace Engine.Core.Managers
 
             await Task.WhenAll(updateTasks);
 
+            _logger.LogInformation($"UpdateEntities took {(_stopwatch.ElapsedMilliseconds - now) / 1000}");
+
             return updatableEntities.Select(x => x.Value).ToList();
         }
 
         public async Task DrawEntities(SpriteBatch spriteBatch, GameTime gameTime)
         {
+            var now = _stopwatch.ElapsedMilliseconds;
             var drawableEntities = Entities.Where(x => x.Value.EntityLifeCycleAction() != EntityActions.UPDATE).ToList();
             drawableEntities.ForEach(x => x.Value.Render(spriteBatch, gameTime));
             
@@ -69,6 +79,8 @@ namespace Engine.Core.Managers
             drawableEntities.ForEach(x => renderTasks.ToList().Add(x.Value.Render(spriteBatch, gameTime)));
 
             await Task.WhenAll(renderTasks);
+
+            _logger.LogInformation($"DrawEntities took {(_stopwatch.ElapsedMilliseconds - now) / 1000} seconds");
         }
     }
 }

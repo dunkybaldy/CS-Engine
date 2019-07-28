@@ -3,6 +3,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -22,9 +23,8 @@ namespace Engine.Core
                 .ConfigureServices()
                 .AddEngineServices()
 
+                // Initialise user's game class
                 .AddSingleton<Game, T>();
-
-            //services.GetRequiredService<ILogger<Engine>>().LogInformation("Engine initialised");
 
             return services;
         }
@@ -33,6 +33,7 @@ namespace Engine.Core
         {
             var sp = services.BuildServiceProvider();
             sp.GetRequiredService<ILogger<E>>().LogInformation("Engine booting up...");
+            sp.GetRequiredService<Stopwatch>().Start();
             sp.GetRequiredService<Game>().Run();
         }
 

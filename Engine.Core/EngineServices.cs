@@ -8,6 +8,7 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -21,7 +22,10 @@ namespace Engine.Core
             services
                 .AddSingleton<IEntityManager, EntityManager>()
                 .AddSingleton<IEntityFactory, EntityFactory>()
-                .AddEngineLogging();
+#if DEBUG
+                .AddEngineLogging()
+                .AddEngineDiagnostics();
+#endif
 
             return services;
         }
@@ -32,6 +36,13 @@ namespace Engine.Core
             {
                 loggingBuilder.AddConsole();
             });
+
+            return services;
+        }
+
+        public static IServiceCollection AddEngineDiagnostics(this IServiceCollection services)
+        {
+            services.AddSingleton<Stopwatch>();
 
             return services;
         }
