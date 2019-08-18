@@ -1,4 +1,5 @@
-﻿using Engine.Core.Managers.Interfaces;
+﻿using Engine.Core.Diagnostics;
+using Engine.Core.Managers.Interfaces;
 using Engine.Core.Models.Enums;
 using Engine.Core.Models.Interfaces;
 using Microsoft.Extensions.Logging;
@@ -16,19 +17,23 @@ namespace Engine.Core
 {
     public class GameApplication : Game
     {
-        private readonly GraphicsDeviceManager _graphicsDeviceManager;
-        private readonly IEntityManager _entityManager;
-        protected readonly ILogger<GameApplication> _logger;
-        private SpriteBatch _spriteBatch;
+        protected GraphicsDeviceManager _graphicsDeviceManager;
+        protected readonly IEntityManager _entityManager;
+        private readonly DiagnosticsController _diagnosticsController;
+        protected readonly ILogger _logger;
+        protected SpriteBatch _spriteBatch;
 
         private ConcurrentQueue<ConcurrentBag<IEntity>> DrawState { get; set; }
 
-        public GameApplication(IEntityManager entityManager, ILogger<GameApplication> logger)
+        public GameApplication(
+            IEntityManager entityManager, 
+            DiagnosticsController diagnosticsController,   
+            ILogger logger)
         {
-            _graphicsDeviceManager = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
 
             _entityManager = entityManager ?? throw new ArgumentNullException(nameof(entityManager));
+            _diagnosticsController = diagnosticsController ?? throw new ArgumentNullException(nameof(diagnosticsController));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
 
             DrawState = new ConcurrentQueue<ConcurrentBag<IEntity>>();
@@ -67,13 +72,16 @@ namespace Engine.Core
         protected virtual async Task DrawAsync(GameTime gameTime)
         {
             List<Task> renderTasks = new List<Task>();
-            if (!DrawState.TryDequeue(out ConcurrentBag<IEntity> entitiesToDraw))
-                _logger.LogError("Something in DrawAsync went wrong");
+            if (DrawState.TryDequeue(out ConcurrentBag<IEntity> entitiesToDraw))
+            {
+                _logger.LogDebug("Drawing {DrawCount} entities", entitiesToDraw.Count);
+                foreach (var entity in entitiesToDraw)
+                    renderTasks.ToList().Add(entity.Render(_spriteBatch, gameTime));
 
-            foreach (var entity in entitiesToDraw)
-                renderTasks.ToList().Add(entity.Render(_spriteBatch, gameTime));
-
-            await Task.WhenAll(renderTasks);
+                await Task.WhenAll(renderTasks);
+            }
+            else
+                _logger.LogError("Attempted to dequeue from DrawState but returned false");
 
             base.Draw(gameTime);
         }
@@ -81,27 +89,27 @@ namespace Engine.Core
         #region Game Implementation
         protected override async void Initialize()
         {
-            await InitialiseAsync();
+            await _diagnosticsController.DiagnoseAsyncMethod(InitialiseAsync(), nameof(InitialiseAsync));
         }
 
         protected override async void LoadContent()
         {
-            await LoadContentAsync();
+            await _diagnosticsController.DiagnoseAsyncMethod(LoadContentAsync(), nameof(LoadContentAsync));
         }
 
         protected override async void UnloadContent()
         {
-            await UnloadContentAsync();
+            await _diagnosticsController.DiagnoseAsyncMethod(UnloadContentAsync(), nameof(UnloadContentAsync));
         }
 
         protected override async void Update(GameTime gameTime)
         {
-            await UpdateAsync(gameTime);
+            await _diagnosticsController.DiagnoseAsyncMethod(UpdateAsync(gameTime), nameof(UpdateAsync));
         }
 
         protected override async void Draw(GameTime gameTime)
         {
-            await DrawAsync(gameTime);
+            await _diagnosticsController.DiagnoseAsyncMethod(DrawAsync(gameTime), nameof(DrawAsync));
         }
         #endregion Game Implementation
     }

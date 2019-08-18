@@ -72,6 +72,12 @@
     <Reference Include="MonoGame.Framework, Version=3.7.1.189, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\MonoGame.Framework.WindowsDX.3.7.1.189\lib\net45\MonoGame.Framework.dll</HintPath>
     </Reference>
+    <Reference Include="Serilog, Version=2.0.0.0, Culture=neutral, PublicKeyToken=24c2f752a8e58a10, processorArchitecture=MSIL">
+      <HintPath>..\packages\Serilog.2.8.0\lib\net46\Serilog.dll</HintPath>
+    </Reference>
+    <Reference Include="Serilog.Sinks.Console, Version=3.1.1.0, Culture=neutral, PublicKeyToken=24c2f752a8e58a10, processorArchitecture=MSIL">
+      <HintPath>..\packages\Serilog.Sinks.Console.3.1.1\lib\net45\Serilog.Sinks.Console.dll</HintPath>
+    </Reference>
     <Reference Include="SharpDX, Version=4.0.1.0, Culture=neutral, PublicKeyToken=b4dcf0f35e5521f1, processorArchitecture=MSIL">
       <HintPath>..\packages\SharpDX.4.0.1\lib\net45\SharpDX.dll</HintPath>
     </Reference>
@@ -126,19 +132,23 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Diagnostics\DiagnosticsController.cs" />
     <Compile Include="Engine.cs" />
     <Compile Include="EngineServices.cs" />
     <Compile Include="Factories\EntityFactory.cs" />
     <Compile Include="Factories\Interfaces\IEntityFactory.cs" />
-    <Compile Include="GameApplicationStartup.cs" />
     <Compile Include="GameApplication.cs" />
+    <Compile Include="Initialiser\MyGraphicsDeviceManager.cs" />
+    <Compile Include="Managers\AssetManager.cs" />
     <Compile Include="Managers\EntityManager.cs" />
+    <Compile Include="Managers\Interfaces\IAssetManager.cs" />
     <Compile Include="Managers\Interfaces\IEntityManager.cs" />
     <Compile Include="Models\Camera.cs" />
     <Compile Include="Models\Entity.cs" />
     <Compile Include="Models\Enums\EntityActions.cs" />
     <Compile Include="Models\Interfaces\ICamera.cs" />
     <Compile Include="Models\Interfaces\IEntity.cs" />
+    <Compile Include="Models\Player.cs" />
     <Compile Include="Models\Transform.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

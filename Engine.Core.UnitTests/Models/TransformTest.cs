@@ -29,9 +29,9 @@ namespace Engine.Core.UnitTests.Models
             var transformBy = new Vector2(2, -1);
             var expected = new Vector2(3, 0);
 
-            var result = Test2d.TransformPosition2d(transformBy);
+            Test2d.Position2d += transformBy;
 
-            result.Should().Be(expected);
+            Test2d.Position2d.Should().Be(expected);
         }
     }
 }

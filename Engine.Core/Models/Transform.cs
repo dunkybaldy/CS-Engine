@@ -10,10 +10,10 @@ namespace Engine.Core.Models
 {
     public class Transform
     {
-        private Vector2 Position2d { get; set; }
-        private Vector2 Scale2d { get; set; }
-        private Vector3 Position3d { get; set; }
-        private Vector3 Scale3d { get; set; }
+        public Vector2 Position2d { get; set; }
+        public Vector2 Scale2d { get; set; }
+        public Vector3 Position3d { get; set; }
+        public Vector3 Scale3d { get; set; }
 
         public Transform() {}
 
@@ -28,10 +28,5 @@ namespace Engine.Core.Models
             Position3d = position3d;
             Scale3d = scale3d;
         }
-
-        public Vector2 TransformPosition2d(Vector2 transform) => Position2d += transform;
-        public Vector2 TransformScale2d(Vector2 transform) => Scale2d += transform;
-        public Vector3 TransformPosition3d(Vector3 transform) => Position3d += transform;
-        public Vector3 TransformScale3d(Vector3 transform) => Scale3d += transform;
     }
 }

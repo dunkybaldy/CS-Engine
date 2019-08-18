@@ -19,24 +19,28 @@ namespace Engine.Core.Models
         protected Transform Transform { get; set; }
         protected EntityActions ActionOnEntity { get; set; }
 
-        public Entity(Transform transform, bool threeDimensional = true)
+        public Entity()
         {
-            ThreeDimensional = threeDimensional;
+
+        }
+
+        public Entity(Transform transform, bool threeDimensional)
+        {
             Transform = transform;
+            ThreeDimensional = threeDimensional;
         }
 
         public EntityActions EntityLifeCycleAction() => ActionOnEntity;
 
         public virtual Task Update(GameTime gameTime)
         {
-            //throw new NotImplementedException();
             return Task.CompletedTask;
         }
 
         public virtual Task Render(SpriteBatch spriteBatch, GameTime gameTime)
         {
-            //if (!ThreeDimensional)
-            //    spriteBatch.Draw(Texture2D, Transform.TransformPosition2d);
+            if (!ThreeDimensional)
+                spriteBatch.Draw(Texture2D, Transform.Position2d, Color.AntiqueWhite);
             return Task.CompletedTask;
         }
     }

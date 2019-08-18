@@ -27,7 +27,7 @@ namespace Engine.Core.Managers
         {
             _entityFactory = entityFactory ?? throw new ArgumentNullException(nameof(entityFactory));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-            _stopwatch = stopwatch ?? throw new ArgumentNullException(nameof(stopwatch));
+            _stopwatch = stopwatch ?? null;
 
             Entities = new ConcurrentDictionary<string, IEntity>();
         }
@@ -56,7 +56,6 @@ namespace Engine.Core.Managers
 
         public async Task<List<IEntity>> UpdateEntities(GameTime gameTime)
         {
-            var now = _stopwatch.ElapsedMilliseconds;
             var updatableEntities = Entities.Where(x => x.Value.EntityLifeCycleAction() != EntityActions.DRAW).ToList();
 
             List<Task> updateTasks = new List<Task>();
@@ -64,23 +63,18 @@ namespace Engine.Core.Managers
 
             await Task.WhenAll(updateTasks);
 
-            _logger.LogInformation($"UpdateEntities took {(_stopwatch.ElapsedMilliseconds - now) / 1000}");
-
             return updatableEntities.Select(x => x.Value).ToList();
         }
 
         public async Task DrawEntities(SpriteBatch spriteBatch, GameTime gameTime)
         {
-            var now = _stopwatch.ElapsedMilliseconds;
             var drawableEntities = Entities.Where(x => x.Value.EntityLifeCycleAction() != EntityActions.UPDATE).ToList();
             drawableEntities.ForEach(x => x.Value.Render(spriteBatch, gameTime));
-            
+
             List<Task> renderTasks = new List<Task>();
             drawableEntities.ForEach(x => renderTasks.ToList().Add(x.Value.Render(spriteBatch, gameTime)));
 
             await Task.WhenAll(renderTasks);
-
-            _logger.LogInformation($"DrawEntities took {(_stopwatch.ElapsedMilliseconds - now) / 1000} seconds");
         }
     }
 }

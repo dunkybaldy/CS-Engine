@@ -1,4 +1,5 @@
 ﻿using Engine.Core;
+using Engine.Core.Diagnostics;
 using Engine.Core.Managers.Interfaces;
 using Microsoft.Extensions.Logging;
 using Microsoft.Xna.Framework;
@@ -26,11 +27,20 @@ namespace ExampleGame
 
         //Orbit
         private bool orbit = false;
-
-        public Game1(IEntityManager entityManager, ILogger<Game1> logger)
-            : base(entityManager, logger)
+        
+        /// <summary>
+        /// Curently messy initialisation
+        /// </summary>
+        /// <param name="entityManager"></param>
+        /// <param name="diagnosticsController"></param>
+        /// <param name="logger"></param>
+        public Game1(
+            IEntityManager entityManager,
+            DiagnosticsController diagnosticsController,
+            ILogger<Game1> logger)
+            : base(entityManager, diagnosticsController, logger)
         {
-            
+            _graphicsDeviceManager = new GraphicsDeviceManager(this);
         }
 
         protected override async Task InitialiseAsync()

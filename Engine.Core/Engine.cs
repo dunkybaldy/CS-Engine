@@ -12,32 +12,28 @@ namespace Engine.Core
 {
     public static class Engine
     {
-        /// <summary>
-        /// Initialise your application with the engine
-        /// </summary>
-        /// <typeparam name="T">Class which inherits from GameApplication</typeparam>
-        /// <returns>a service collection for you to add any other </returns>
-        public static IServiceCollection AddEngineServices<T>() where T : Game
+        public static IServiceCollection Initialise(IServiceCollection services)
         {
-            var services = new ServiceCollection()
-                .ConfigureServices()
-                .AddEngineServices()
-
-                // Initialise user's game class
-                .AddSingleton<Game, T>();
-
-            return services;
+            return services.AddEngineServices();
         }
 
-        public static void Run(IServiceCollection services)
+        public static IServiceProvider Run<T>() where T : Game
         {
+            var services = new ServiceCollection().AddEngineServices();
+            return Run<T>(services);
+        }
+
+        public static IServiceProvider Run<T>(IServiceCollection services) where T : Game
+        {
+            services.AddSingleton<T>();
             var sp = services.BuildServiceProvider();
-            sp.GetRequiredService<ILogger<E>>().LogInformation("Engine booting up...");
-            sp.GetRequiredService<Stopwatch>().Start();
-            sp.GetRequiredService<Game>().Run();
+            sp.GetRequiredService<ILogger<EngineInitialiser>>().LogInformation("Engine booting up...");
+            var gameApplication = sp.GetRequiredService<T>();
+            gameApplication.Run();
+            return sp;
         }
 
-        internal class E
+        private class EngineInitialiser
         {
 
         }
