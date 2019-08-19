@@ -27,13 +27,13 @@ namespace Engine.Core
                 .AddSingleton<IAssetManager, AssetManager>()
                 .AddSingleton<IEntityManager, EntityManager>()
                 .AddSingleton<IEntityFactory, EntityFactory>()
+                .AddSingleton<IEventManager, EventManager>()
                 .AddSingleton<IGraphicsDeviceService, MyGraphicsDeviceManager>()
 #if DEBUG
                 .AddEngineLogging()
+#endif
                 .AddEngineDiagnostics()
                 ;
-#endif
-
             return services;
         }
 

@@ -10,11 +10,9 @@ using System.Threading.Tasks;
 
 namespace Engine.Core.Models.Interfaces
 {
-    public interface IEntity
+    public interface IEntity3D : IEntity
     {
-        EntityActions EntityLifeCycleAction();
-        void ApplySoundEffects(IEnumerable<SoundEffect> soundEffects);
-        Task Update(GameTime gameTime);
-        Task Render(GameTime gameTime);
+        void ApplyModel(Model model);
+        void ApplyTexture3D(Texture3D texture3D);
     }
 }

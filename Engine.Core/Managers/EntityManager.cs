@@ -39,6 +39,13 @@ namespace Engine.Core.Managers
             return entity;
         }
 
+        public async Task<TChild> Create<TParent, TChild>() where TChild : TParent, new()
+        {
+            var entity = await _entityFactory.Create<TParent, TChild>();
+            Entities.TryAdd($"{nameof(entity)}|{Guid.NewGuid().ToString()}", entity);
+            return entity;
+        }
+
         public async Task<T> Create<T>(string id) where T : IEntity, new()
         {
             var entity = await _entityFactory.Create<T>();

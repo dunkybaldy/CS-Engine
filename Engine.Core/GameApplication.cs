@@ -19,20 +19,23 @@ namespace Engine.Core
     {
         protected GraphicsDeviceManager _graphicsDeviceManager;
         protected readonly IEntityManager _entityManager;
-        private readonly DiagnosticsController _diagnosticsController;
+        protected readonly IEventManager _eventManager;
+        protected readonly DiagnosticsController _diagnosticsController;
         protected readonly ILogger _logger;
         protected SpriteBatch _spriteBatch;
 
         private ConcurrentQueue<ConcurrentBag<IEntity>> DrawState { get; set; }
 
         public GameApplication(
-            IEntityManager entityManager, 
+            IEntityManager entityManager,
+            IEventManager eventManager,
             DiagnosticsController diagnosticsController,   
             ILogger logger)
         {
             Content.RootDirectory = "Content";
 
             _entityManager = entityManager ?? throw new ArgumentNullException(nameof(entityManager));
+            _eventManager = eventManager ?? throw new ArgumentNullException(nameof(eventManager));
             _diagnosticsController = diagnosticsController ?? throw new ArgumentNullException(nameof(diagnosticsController));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
 
@@ -60,6 +63,7 @@ namespace Engine.Core
 
         protected virtual async Task UpdateAsync(GameTime gameTime)
         {
+            await _eventManager.ProcessEvent();
             var entitiesToEnqueue = await _entityManager.UpdateEntities(gameTime);
 
             // Not equal to update because we only want to draw entities which can be drawn

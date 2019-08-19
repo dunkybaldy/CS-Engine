@@ -21,13 +21,13 @@ namespace Engine.Core.Managers
         }
 
         public Model GetModel(string assetName)
-            => _contentManager.Load<Model>(assetName);
+            => _contentManager.Load<Model>(assetName + "_Model");
 
         public Texture2D GetTexture2D(string assetName)
             => _contentManager.Load<Texture2D>(assetName);
 
         public Texture3D GetTexture3D(string assetName)
-            => _contentManager.Load<Texture3D>(assetName);
+            => _contentManager.Load<Texture3D>(assetName + "_Texture3D");
 
         public SoundEffect GetSoundEffect(string assetName)
             => _contentManager.Load<SoundEffect>(assetName);

@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using Engine.Core.Managers.Interfaces;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Xna.Framework;
 using System;
@@ -28,8 +29,10 @@ namespace Engine.Core
             services.AddSingleton<T>();
             var sp = services.BuildServiceProvider();
             sp.GetRequiredService<ILogger<EngineInitialiser>>().LogInformation("Engine booting up...");
+
             var gameApplication = sp.GetRequiredService<T>();
             gameApplication.Run();
+
             return sp;
         }
 

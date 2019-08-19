@@ -123,6 +123,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Entities\Robot.cs" />
     <Compile Include="Entities\Triangle.cs" />
     <Compile Include="Game1.cs" />
     <Compile Include="GameInitialiser.cs" />

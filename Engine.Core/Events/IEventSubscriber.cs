@@ -4,13 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Engine.Core.Models
+namespace Engine.Core.Events
 {
-    public class Player : Entity3D
+    public interface IEventSubscriber
     {
-        public Player()
-        {
-
-        }
+        Task HandleEvent(MyEvent @event);
     }
 }

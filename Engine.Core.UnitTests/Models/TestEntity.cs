@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Engine.Core.UnitTests.Models
 {
-    public class TestEntity : Entity
+    public class TestEntity : Entity3D
     {
         public TestEntity(Transform transform, bool threeDimensional = true) 
             : base(transform, threeDimensional)

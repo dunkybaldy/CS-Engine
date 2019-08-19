@@ -36,9 +36,10 @@ namespace ExampleGame
         /// <param name="logger"></param>
         public Game1(
             IEntityManager entityManager,
+            IEventManager eventManager,
             DiagnosticsController diagnosticsController,
             ILogger<Game1> logger)
-            : base(entityManager, diagnosticsController, logger)
+            : base(entityManager, eventManager, diagnosticsController, logger)
         {
             _graphicsDeviceManager = new GraphicsDeviceManager(this);
         }
@@ -145,11 +146,11 @@ namespace ExampleGame
 
             GraphicsDevice.Clear(Color.CornflowerBlue);
             GraphicsDevice.SetVertexBuffer(vertexBuffer);
-
             //Turn off culling so we see both sides of our rendered triangle
-            RasterizerState rasterizerState = new RasterizerState();
-            rasterizerState.CullMode = CullMode.None;
-            GraphicsDevice.RasterizerState = rasterizerState;
+            GraphicsDevice.RasterizerState = new RasterizerState
+            {
+                CullMode = CullMode.None
+            };
 
             foreach (EffectPass pass in basicEffect.CurrentTechnique.Passes)
             {

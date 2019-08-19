@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace ExampleGame.Entities
 {
-    public class Triangle : Entity
+    public class Triangle : Entity3D
     {
         public Triangle()
         {
