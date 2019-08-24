@@ -4,10 +4,6 @@ using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Media;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Engine.Core.Managers
 {
@@ -21,13 +17,13 @@ namespace Engine.Core.Managers
         }
 
         public Model GetModel(string assetName)
-            => _contentManager.Load<Model>(assetName + "_Model");
+            => _contentManager.Load<Model>(assetName);
 
         public Texture2D GetTexture2D(string assetName)
             => _contentManager.Load<Texture2D>(assetName);
 
         public Texture3D GetTexture3D(string assetName)
-            => _contentManager.Load<Texture3D>(assetName + "_Texture3D");
+            => _contentManager.Load<Texture3D>(assetName);
 
         public SoundEffect GetSoundEffect(string assetName)
             => _contentManager.Load<SoundEffect>(assetName);

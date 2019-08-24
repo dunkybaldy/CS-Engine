@@ -24,7 +24,7 @@ namespace Engine.Core.Diagnostics
             _stopwatch.Start();
         }
 
-        public async Task DiagnoseAsyncMethod(Task action, string methodName)
+        public async Task DiagnoseTask(Task action, string methodName)
         {
             try
             {
@@ -40,7 +40,7 @@ namespace Engine.Core.Diagnostics
             }
         }
 
-        public async Task DiagnoseMethod(Func<Action> action)
+        public async Task DiagnoseFunctionAction(Func<Action> action)
         {
             try
             {
@@ -56,12 +56,26 @@ namespace Engine.Core.Diagnostics
             }
         }
 
+        public async Task DiagnoseAction(Action action)
+        {
+            try
+            {
+                var beforeExecution = _stopwatch.ElapsedMilliseconds;
+                await Task.FromResult(new Task(action));
+                var executionTime = _stopwatch.ElapsedMilliseconds - beforeExecution;
+                _logger.LogInformation("{MethodName} finished executing in {MethodExecutionTime} ms", action.Method.Name, executionTime);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Something went wrong in {MethodName}", action.Method.Name);
+                AddError(action.Method.Name);
+            }
+        }
+
         private void AddError(string methodName)
         {
             if (MethodErrors.ContainsKey(methodName))
-            {
-                var methodValue = MethodErrors[methodName];
-            }
+                MethodErrors[methodName] += 1;            
         }
 
         public void Dispose()

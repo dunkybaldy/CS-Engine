@@ -5,6 +5,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using System;
 using System.Threading.Tasks;
 
 namespace ExampleGame
@@ -155,8 +156,7 @@ namespace ExampleGame
             foreach (EffectPass pass in basicEffect.CurrentTechnique.Passes)
             {
                 pass.Apply();
-                GraphicsDevice.DrawPrimitives(PrimitiveType.
-                                              TriangleList, 0, 3);
+                GraphicsDevice.DrawPrimitives(PrimitiveType.TriangleList, 0, 3);
             }
 
             await base.DrawAsync(gameTime);

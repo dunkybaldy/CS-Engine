@@ -1,4 +1,5 @@
-﻿using Engine.Core.Events;
+﻿using Engine.Core.Diagnostics;
+using Engine.Core.Events;
 using Engine.Core.Managers.Interfaces;
 
 using Microsoft.Extensions.Logging;
@@ -15,17 +16,25 @@ namespace Engine.Core.Managers
     public class EventManager : IEventManager
     {
         private readonly ILogger<EventManager> _logger;
+        private readonly DiagnosticsController _diagnosticsController;
 
         public ConcurrentQueue<MyEvent> EventQueue { get; private set; }
+        private bool Running { get; set; } = true;
 
         public ConcurrentDictionary<EventType, ConcurrentBag<IEventSubscriber>> Subscribers { get; set; }
 
-        public EventManager(ILogger<EventManager> logger)
+        public EventManager(ILogger<EventManager> logger, DiagnosticsController diagnosticsController)
         {
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            _diagnosticsController = diagnosticsController ?? throw new ArgumentNullException(nameof(diagnosticsController));
 
             EventQueue = new ConcurrentQueue<MyEvent>();
             Subscribers = new ConcurrentDictionary<EventType, ConcurrentBag<IEventSubscriber>>();
+        }
+
+        public async void Begin()
+        {
+            await ProcessEvents();
         }
 
         public Task PublishEvent<T>(T @event) where T : MyEvent
@@ -35,15 +44,30 @@ namespace Engine.Core.Managers
             return Task.CompletedTask;
         }
 
-        public async Task ProcessEvent()
+        private async Task ProcessEvents()
         {
-            _logger.LogWarning("Process event");
-            var tasks = new List<Task>();
+            while (Running)
+            {
+                var tasks = new List<Task>();
 
-            if (EventQueue.TryDequeue(out MyEvent myEvent))
-                Subscribers[myEvent.EventType].ToList().ForEach(x => tasks.Add(x.HandleEvent(myEvent)));
+                if (EventQueue.TryDequeue(out MyEvent myEvent))
+                {
+                    _logger.LogInformation("Found event '{EventType}'. Adding publish task for subscribers.", myEvent.EventType);
+                    Subscribers[myEvent.EventType].ToList().ForEach(x => tasks.Add(x.HandleEvent(myEvent)));
+                }
 
-            await Task.WhenAll(tasks);
+                await _diagnosticsController.DiagnoseTask(Task.WhenAll(tasks), "HandleEvent");
+            }
+        }
+
+        public bool OnOffSwitch(bool? @switch)
+        {
+            if (@switch.HasValue)
+                Running = @switch.Value;
+            else
+                Running = !Running;
+
+            return Running;
         }
 
         public Task SubscribeToEvent(EventType eventType, IEventSubscriber subscriber)

@@ -15,15 +15,5 @@ namespace Engine.Core.UnitTests.Models
             : base(transform, threeDimensional)
         {
         }
-
-        public override Task Render(SpriteBatch spriteBatch, GameTime gameTime)
-        {
-            return base.Render(spriteBatch, gameTime);
-        }
-
-        public override Task Update(GameTime gameTime)
-        {
-            return base.Update(gameTime);
-        }
     }
 }

@@ -9,6 +9,7 @@ using Engine.Core.Models.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Logging;
+using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
@@ -21,9 +22,10 @@ namespace Engine.Core
 {
     public static class EngineServices
     {
-        internal static IServiceCollection AddEngineServices(this IServiceCollection services)
+        public static IServiceCollection AddEngineServices(this IServiceCollection services)
         {
             services
+                .AddSingleton<ContentManager>()
                 .AddSingleton<IAssetManager, AssetManager>()
                 .AddSingleton<IEntityManager, EntityManager>()
                 .AddSingleton<IEntityFactory, EntityFactory>()
@@ -32,8 +34,7 @@ namespace Engine.Core
 #if DEBUG
                 .AddEngineLogging()
 #endif
-                .AddEngineDiagnostics()
-                ;
+                .AddEngineDiagnostics();
             return services;
         }
 

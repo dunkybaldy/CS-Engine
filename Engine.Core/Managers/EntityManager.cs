@@ -39,7 +39,9 @@ namespace Engine.Core.Managers
             return entity;
         }
 
-        public async Task<TChild> Create<TParent, TChild>() where TChild : TParent, new()
+        public async Task<TChild> Create<TParent, TChild>() 
+            where TChild : TParent, new()
+            where TParent : IEntity, new()
         {
             var entity = await _entityFactory.Create<TParent, TChild>();
             Entities.TryAdd($"{nameof(entity)}|{Guid.NewGuid().ToString()}", entity);
@@ -73,14 +75,20 @@ namespace Engine.Core.Managers
             return updatableEntities.Select(x => x.Value).ToList();
         }
 
-        public async Task DrawEntities(SpriteBatch spriteBatch, GameTime gameTime)
+        public async Task DrawEntities(GameTime gameTime)
         {
             var drawableEntities = Entities.Where(x => x.Value.EntityLifeCycleAction() != EntityActions.UPDATE).ToList();
-            drawableEntities.ForEach(x => x.Value.Render(spriteBatch, gameTime));
 
             List<Task> renderTasks = new List<Task>();
-            drawableEntities.ForEach(x => renderTasks.ToList().Add(x.Value.Render(spriteBatch, gameTime)));
+            drawableEntities.ForEach(x => renderTasks.ToList().Add(x.Value.Render(gameTime)));
 
+            await Task.WhenAll(renderTasks);
+        }
+
+        public async Task DrawEntities(GameTime gameTime, List<IEntity> entitiesToDraw)
+        {
+            List<Task> renderTasks = new List<Task>();
+            entitiesToDraw.ForEach(x => renderTasks.ToList().Add(x.Render(gameTime)));
             await Task.WhenAll(renderTasks);
         }
     }
