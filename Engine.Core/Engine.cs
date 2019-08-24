@@ -28,16 +28,11 @@ namespace Engine.Core
                 var services = new ServiceCollection().Initialise(gameServices);
                 var serviceProvider = BuildServices<T>(services);
 
+                // Add per thread methods here
                 Task.Factory.StartNew(RunEventSystem(serviceProvider));
+
+                // Main Run method must be on the main thread (this thread)
                 RunGame<T>(serviceProvider);
-
-                //var setupTasks = new List<Task> { };
-                //var runTasks = new List<Task>
-                //{
-                //};
-
-                //await Task.WhenAll(setupTasks);
-                //await Task.WhenAll(runTasks);
 
                 return 0;
             }
