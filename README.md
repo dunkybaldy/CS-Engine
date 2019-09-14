@@ -1,10 +1,16 @@
 ## HardCodedEngine
 
 Travis-CI Build Statuses: 
-| Branches | Status |
-| -------- | ------ |
-| dev-test | [![Build Status](https://travis-ci.org/dunkybaldy/CS-Engine.svg?branch=dev-test)](https://travis-ci.org/dunkybaldy/CS-Engine) |
-| master | |
+<table>
+<tr>
+    <th>Branches</th>
+    <th>Status</th>
+</tr>
+  <tr>
+    <td>dev-test</td>
+    <td>[![Build Status](https://travis-ci.org/dunkybaldy/CS-Engine.svg?branch=dev-test)](https://travis-ci.org/dunkybaldy/CS-Engine)</td>
+</tr>
+ </table>
 
 The purpose of this project is mainly investigation and pursuit of knowledge.
 * C#
