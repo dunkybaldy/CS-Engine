@@ -8,7 +8,7 @@ Travis-CI Build Statuses:
 </tr>
   <tr>
     <td>dev-test</td>
-    <td>[![Build Status](https://travis-ci.org/dunkybaldy/CS-Engine.svg?branch=dev-test)](https://travis-ci.org/dunkybaldy/CS-Engine)</td>
+    <td>https://travis-ci.org/dunkybaldy/CS-Engine.svg?branch=dev-test</td>
 </tr>
  </table>
 
