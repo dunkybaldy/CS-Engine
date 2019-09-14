@@ -1,13 +1,14 @@
 ﻿using Engine.Core;
 using Engine.Core.Diagnostics;
-using Engine.Core.Initialiser;
 using Engine.Core.Managers.Interfaces;
+
 using ExampleGame.Entities;
+
 using Microsoft.Extensions.Logging;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
-using System;
+
 using System.Threading.Tasks;
 
 namespace ExampleGame
@@ -18,10 +19,6 @@ namespace ExampleGame
         private Vector3 camTarget;
         private Vector3 camPosition;
         private float aspectRatio;
-
-        private Matrix projectionMatrix;
-        private Matrix viewMatrix;
-        private Matrix worldMatrix;
 
         ////BasicEffect for rendering
         private BasicEffect basicEffect;

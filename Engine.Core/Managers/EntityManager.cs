@@ -2,15 +2,15 @@
 using Engine.Core.Managers.Interfaces;
 using Engine.Core.Models.Enums;
 using Engine.Core.Models.Interfaces;
+
 using Microsoft.Extensions.Logging;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
+
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Engine.Core.Managers

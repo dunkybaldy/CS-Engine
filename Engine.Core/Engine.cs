@@ -1,14 +1,11 @@
-﻿using Engine.Core.Initialiser;
-using Engine.Core.Managers.Interfaces;
+﻿using Engine.Core.Managers.Interfaces;
 
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+
 using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
