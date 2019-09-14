@@ -1,6 +1,6 @@
 ## CS-Engine
 
-Travis-CI Build Statuses: 
+Travis-CI
 
 |Branch|Status|
 |----|----------|
