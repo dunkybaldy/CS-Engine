@@ -5,4 +5,4 @@ install:
   - nuget install NUnit.Console -Version 3.10.0 -OutputDirectory testrunner
 script:
   - msbuild /p:Configuration=Release ConsoleApp.sln
-  - mono ./testrunner/NUnit.ConsoleRunner.3.10.0/tools/nunit3-console.exe ./Engine.Core.UnitTests/bin/Release/Engine.Core.dll
+  - mono ./testrunner/NUnit.ConsoleRunner.3.10.0/tools/nunit3-console.exe ./Engine.Core.UnitTests/bin/Release/Engine.Core.UnitTests.dll
