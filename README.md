@@ -1,6 +1,7 @@
-## HardCodedEngine
+## CS-Engine
 
 Travis-CI Build Statuses: 
+
 dev-test: [![Build Status](https://travis-ci.org/dunkybaldy/CS-Engine.svg?branch=dev-test)](https://travis-ci.org/dunkybaldy/CS-Engine)
 
 The purpose of this project is mainly investigation and pursuit of knowledge.
