@@ -15,6 +15,8 @@ namespace Engine.Core.Managers.Interfaces
         Task<T> Create<T>(string id) where T : IEntity, new();
         IEntity GetEntity(string id);
         Task<List<IEntity>> UpdateEntities(GameTime gameTime);
-        Task DrawEntities(SpriteBatch spriteBatch, GameTime gameTime);
+        Task DrawEntities(GameTime gameTime);
+        Task DrawEntities(GameTime gameTime, List<IEntity> entitiesToDraw);
+        void SetCameraAspectRatio(Vector3 cameraPosition, float aspectRatio);
     }
 }

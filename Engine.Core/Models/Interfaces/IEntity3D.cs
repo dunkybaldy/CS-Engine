@@ -10,12 +10,12 @@ using System.Threading.Tasks;
 
 namespace Engine.Core.Models.Interfaces
 {
-    public interface IEntity
+    public interface IEntity3D : IEntity
     {
-        EntityActions EntityLifeCycleAction();
-        void ApplySoundEffects(IEnumerable<SoundEffect> soundEffects);
-        Task Update(GameTime gameTime);
-        Task Render(GameTime gameTime);
-        Task Render(GameTime gameTime, Vector3 cameraPosition, float aspectRatio);
+        string GetModelName();
+        string GetTextureName();
+        void ApplyGraphics(Model model);
+        void ApplyGraphics(Texture2D texture);
+        void ApplyGraphics(Model model, Texture2D texture);
     }
 }

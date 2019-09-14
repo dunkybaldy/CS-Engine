@@ -1,10 +1,14 @@
-﻿using Engine.Core.Managers.Interfaces;
+﻿using Engine.Core.Diagnostics;
+using Engine.Core.Initialiser;
+using Engine.Core.Managers.Interfaces;
 using Engine.Core.Models.Enums;
 using Engine.Core.Models.Interfaces;
+
 using Microsoft.Extensions.Logging;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -16,92 +20,168 @@ namespace Engine.Core
 {
     public class GameApplication : Game
     {
-        private readonly GraphicsDeviceManager _graphicsDeviceManager;
-        private readonly IEntityManager _entityManager;
-        protected readonly ILogger<GameApplication> _logger;
-        private SpriteBatch _spriteBatch;
+        private readonly IDeviceManager _deviceManager;
+        protected readonly IEntityManager _entityManager;
+        protected readonly IEventManager _eventManager;
+        protected GraphicsDeviceManager _graphicsDeviceManager;
+        protected readonly DiagnosticsController _diagnosticsController;
+        protected readonly ILogger _logger;
+        protected SpriteBatch _spriteBatch;
+
+        protected string GameTitle { get; set; } = "Game";
 
         private ConcurrentQueue<ConcurrentBag<IEntity>> DrawState { get; set; }
 
-        public GameApplication(IEntityManager entityManager, ILogger<GameApplication> logger)
+        public GameApplication(
+            IDeviceManager deviceManager,
+            IEntityManager entityManager,
+            IEventManager eventManager,
+            DiagnosticsController diagnosticsController,
+            ILogger logger)
         {
-            _graphicsDeviceManager = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
 
+            _deviceManager = deviceManager ?? throw new ArgumentNullException(nameof(deviceManager));
             _entityManager = entityManager ?? throw new ArgumentNullException(nameof(entityManager));
+            _eventManager = eventManager ?? throw new ArgumentNullException(nameof(eventManager));
+            _diagnosticsController = diagnosticsController ?? throw new ArgumentNullException(nameof(diagnosticsController));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+
+            _graphicsDeviceManager = new GraphicsDeviceManager(this);
 
             DrawState = new ConcurrentQueue<ConcurrentBag<IEntity>>();
         }
 
         protected virtual Task InitialiseAsync()
         {
-            base.Initialize();
-            return Task.CompletedTask;
+            try
+            {
+                base.Initialize();
+                // Get engine advertisment screen on there
+                // Screen set up
+
+                return Task.CompletedTask;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, ex.Message);
+                throw;
+            }
         }
 
         protected virtual Task LoadContentAsync()
         {
-            base.LoadContent();
-            _spriteBatch = new SpriteBatch(GraphicsDevice);
-            return Task.CompletedTask;
+            try
+            { 
+                base.LoadContent();
+                _spriteBatch = new SpriteBatch(GraphicsDevice);
+                // Set up all the models?
+
+                return Task.CompletedTask;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, ex.Message);
+                throw;
+            }
         }
 
         protected virtual Task UnloadContentAsync()
         {
-            base.UnloadContent();
-            return Task.CompletedTask;
+            try
+            {
+                base.UnloadContent();
+                return Task.CompletedTask;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, ex.Message);
+                throw;
+            }
         }
 
         protected virtual async Task UpdateAsync(GameTime gameTime)
         {
-            var entitiesToEnqueue = await _entityManager.UpdateEntities(gameTime);
+            try
+            {
+                //await _deviceManager.PollState();
+                var entitiesToEnqueue = await _entityManager.UpdateEntities(gameTime);
 
-            // Not equal to update because we only want to draw entities which can be drawn
-            var bag = new ConcurrentBag<IEntity>(entitiesToEnqueue.Where(x => x.EntityLifeCycleAction() != EntityActions.UPDATE));
+                // Not equal to update because we only want to draw entities which can be drawn
+                var bag = new ConcurrentBag<IEntity>(entitiesToEnqueue.Where(x => x.EntityLifeCycleAction() != EntityActions.UPDATE));
 
-            DrawState.Enqueue(bag);
-            base.Update(gameTime);
+                DrawState.Enqueue(bag);
+
+                base.Update(gameTime);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, ex.Message);
+                throw;
+            }
         }
 
         protected virtual async Task DrawAsync(GameTime gameTime)
         {
-            List<Task> renderTasks = new List<Task>();
-            if (!DrawState.TryDequeue(out ConcurrentBag<IEntity> entitiesToDraw))
-                _logger.LogError("Something in DrawAsync went wrong");
+            try
+            {
+                if (DrawState.TryDequeue(out ConcurrentBag<IEntity> entitiesToDraw))
+                    await _entityManager.DrawEntities(gameTime, entitiesToDraw.ToList());
+                else
+                    _logger.LogWarning("Attempted to dequeue from DrawState but returned false");
 
-            foreach (var entity in entitiesToDraw)
-                renderTasks.ToList().Add(entity.Render(_spriteBatch, gameTime));
+                base.Draw(gameTime);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, ex.Message);
+                throw;
+            }
+        }
 
-            await Task.WhenAll(renderTasks);
+        protected override void OnActivated(object sender, EventArgs args)
+        {
+            Window.Title = GameTitle;
+            base.OnActivated(sender, args);
+        }
 
-            base.Draw(gameTime);
+        protected override void OnDeactivated(object sender, EventArgs args)
+        {
+            Window.Title = $"{GameTitle} | Deactive";
+            // Open Menu pause
+            base.OnDeactivated(sender, args);
+        }
+
+        protected override void OnExiting(object sender, EventArgs args)
+        {
+            // quicksave or something
+            base.OnExiting(sender, args);
         }
 
         #region Game Implementation
         protected override async void Initialize()
         {
-            await InitialiseAsync();
+            await _diagnosticsController.DiagnoseTask(InitialiseAsync(), nameof(InitialiseAsync));
         }
 
         protected override async void LoadContent()
         {
-            await LoadContentAsync();
+            await _diagnosticsController.DiagnoseTask(LoadContentAsync(), nameof(LoadContentAsync));
         }
 
         protected override async void UnloadContent()
         {
-            await UnloadContentAsync();
+            await _diagnosticsController.DiagnoseTask(UnloadContentAsync(), nameof(UnloadContentAsync));
         }
 
         protected override async void Update(GameTime gameTime)
         {
-            await UpdateAsync(gameTime);
+            await _diagnosticsController.DiagnoseTask(UpdateAsync(gameTime), nameof(UpdateAsync));
         }
 
         protected override async void Draw(GameTime gameTime)
         {
-            await DrawAsync(gameTime);
+            await _diagnosticsController.DiagnoseTask(DrawAsync(gameTime), nameof(DrawAsync));
         }
         #endregion Game Implementation
     }
