@@ -16,5 +16,3 @@ The purpose of this project is mainly investigation and pursuit of knowledge.
   * Audio
   * Maps and Spatial Partitioning
   * Animation and time based events
-
-Will eventually set up with Jenkins and Appveyor
