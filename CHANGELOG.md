@@ -1,5 +1,13 @@
 ### Monogame Engine Changelog
 
+##### 14/09/2019 - dunkybaldy
+* Add engine diagnostics, can wrap targeted functions in a diagnose function from the controller
+* Initial work to add event management, starting with keyboard (TODO)
+* Support for creating 3d entities
+* Initial work to allow for game settings to be added and managed through the engine making it generic for every game (TODO)
+* Ability to draw using matrices defined in the entity class
+* Added NUnit test project
+
 ##### 24/08/2019 - dunkybaldy
 * Set up event handling to run on a separate thread.
   * Task.Factory.StartNew(action)

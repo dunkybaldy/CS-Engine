@@ -31,11 +31,11 @@ namespace Engine.Core.Diagnostics
                 var beforeExecution = _stopwatch.ElapsedMilliseconds;
                 await action;
                 var executionTime = _stopwatch.ElapsedMilliseconds - beforeExecution;
-                _logger.LogInformation("{MethodName} finished executing in {MethodExecutionTime} ms", methodName, executionTime);
+                _logger.LogDebug("{MethodName} finished executing in {MethodExecutionTime} ms", methodName, executionTime);
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Something went wrong in {MethodName}", methodName);
+                _logger.LogError(ex, "Something went wrong in {MethodName}.", methodName);
                 AddError(nameof(action));
             }
         }
@@ -47,7 +47,7 @@ namespace Engine.Core.Diagnostics
                 var beforeExecution = _stopwatch.ElapsedMilliseconds;
                 await Task.FromResult(action.Invoke());
                 var executionTime = _stopwatch.ElapsedMilliseconds - beforeExecution;
-                _logger.LogInformation("{MethodName} finished executing in {MethodExecutionTime} ms", action.Method.Name, executionTime);
+                _logger.LogDebug("{MethodName} finished executing in {MethodExecutionTime} ms", action.Method.Name, executionTime);
             }
             catch (Exception ex)
             {
@@ -63,7 +63,7 @@ namespace Engine.Core.Diagnostics
                 var beforeExecution = _stopwatch.ElapsedMilliseconds;
                 await Task.FromResult(new Task(action));
                 var executionTime = _stopwatch.ElapsedMilliseconds - beforeExecution;
-                _logger.LogInformation("{MethodName} finished executing in {MethodExecutionTime} ms", action.Method.Name, executionTime);
+                _logger.LogDebug("{MethodName} finished executing in {MethodExecutionTime} ms", action.Method.Name, executionTime);
             }
             catch (Exception ex)
             {

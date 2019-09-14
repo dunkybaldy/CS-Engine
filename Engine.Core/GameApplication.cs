@@ -1,4 +1,5 @@
 ﻿using Engine.Core.Diagnostics;
+using Engine.Core.Initialiser;
 using Engine.Core.Managers.Interfaces;
 using Engine.Core.Models.Enums;
 using Engine.Core.Models.Interfaces;
@@ -19,92 +20,123 @@ namespace Engine.Core
 {
     public class GameApplication : Game
     {
-        protected GraphicsDeviceManager _graphicsDeviceManager;
+        private readonly IDeviceManager _deviceManager;
         protected readonly IEntityManager _entityManager;
         protected readonly IEventManager _eventManager;
+        protected GraphicsDeviceManager _graphicsDeviceManager;
         protected readonly DiagnosticsController _diagnosticsController;
         protected readonly ILogger _logger;
         protected SpriteBatch _spriteBatch;
 
         protected string GameTitle { get; set; } = "Game";
-        private bool GameRunning { get; set; } = true;
 
         private ConcurrentQueue<ConcurrentBag<IEntity>> DrawState { get; set; }
 
         public GameApplication(
+            IDeviceManager deviceManager,
             IEntityManager entityManager,
             IEventManager eventManager,
-            DiagnosticsController diagnosticsController,   
+            DiagnosticsController diagnosticsController,
             ILogger logger)
         {
             Content.RootDirectory = "Content";
 
+            _deviceManager = deviceManager ?? throw new ArgumentNullException(nameof(deviceManager));
             _entityManager = entityManager ?? throw new ArgumentNullException(nameof(entityManager));
             _eventManager = eventManager ?? throw new ArgumentNullException(nameof(eventManager));
             _diagnosticsController = diagnosticsController ?? throw new ArgumentNullException(nameof(diagnosticsController));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+
+            _graphicsDeviceManager = new GraphicsDeviceManager(this);
 
             DrawState = new ConcurrentQueue<ConcurrentBag<IEntity>>();
         }
 
         protected virtual Task InitialiseAsync()
         {
-            base.Initialize();
-            // Get engine advertisment screen on there
-            // Screen set up
+            try
+            {
+                base.Initialize();
+                // Get engine advertisment screen on there
+                // Screen set up
 
-            return Task.CompletedTask;
+                return Task.CompletedTask;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, ex.Message);
+                throw;
+            }
         }
 
         protected virtual Task LoadContentAsync()
         {
-            base.LoadContent();
-            _spriteBatch = new SpriteBatch(GraphicsDevice);
-            // Set up all the models?
+            try
+            { 
+                base.LoadContent();
+                _spriteBatch = new SpriteBatch(GraphicsDevice);
+                // Set up all the models?
 
-            return Task.CompletedTask;
+                return Task.CompletedTask;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, ex.Message);
+                throw;
+            }
         }
 
         protected virtual Task UnloadContentAsync()
         {
-            base.UnloadContent();
-            return Task.CompletedTask;
+            try
+            {
+                base.UnloadContent();
+                return Task.CompletedTask;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, ex.Message);
+                throw;
+            }
         }
 
         protected virtual async Task UpdateAsync(GameTime gameTime)
         {
-            var entitiesToEnqueue = await _entityManager.UpdateEntities(gameTime);
-            // Not equal to update because we only want to draw entities which can be drawn
-            var bag = new ConcurrentBag<IEntity>(entitiesToEnqueue.Where(x => x.EntityLifeCycleAction() != EntityActions.UPDATE));
+            try
+            {
+                //await _deviceManager.PollState();
+                var entitiesToEnqueue = await _entityManager.UpdateEntities(gameTime);
 
-            DrawState.Enqueue(bag);
+                // Not equal to update because we only want to draw entities which can be drawn
+                var bag = new ConcurrentBag<IEntity>(entitiesToEnqueue.Where(x => x.EntityLifeCycleAction() != EntityActions.UPDATE));
 
-            base.Update(gameTime);
+                DrawState.Enqueue(bag);
+
+                base.Update(gameTime);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, ex.Message);
+                throw;
+            }
         }
 
         protected virtual async Task DrawAsync(GameTime gameTime)
         {
-            if (DrawState.TryDequeue(out ConcurrentBag<IEntity> entitiesToDraw))
-                await _entityManager.DrawEntities(gameTime, entitiesToDraw.ToList());
-            else
-                _logger.LogError("Attempted to dequeue from DrawState but returned false");
-
-            await _entityManager.DrawEntities(gameTime);
-
-            base.Draw(gameTime);
-        }
-
-        public void RunGame()
-        {
             try
             {
-                Run();
+                if (DrawState.TryDequeue(out ConcurrentBag<IEntity> entitiesToDraw))
+                    await _entityManager.DrawEntities(gameTime, entitiesToDraw.ToList());
+                else
+                    _logger.LogWarning("Attempted to dequeue from DrawState but returned false");
+
+                base.Draw(gameTime);
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "{MethodName} caught an exception. Ending application early.", nameof(RunGame));
+                _logger.LogError(ex, ex.Message);
                 throw;
-            }            
+            }
         }
 
         protected override void OnActivated(object sender, EventArgs args)
@@ -122,7 +154,7 @@ namespace Engine.Core
 
         protected override void OnExiting(object sender, EventArgs args)
         {
-            GameRunning = false;
+            // quicksave or something
             base.OnExiting(sender, args);
         }
 

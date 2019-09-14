@@ -18,7 +18,7 @@ namespace Engine.Core.Managers
         private readonly ILogger<EventManager> _logger;
         private readonly DiagnosticsController _diagnosticsController;
 
-        public ConcurrentQueue<MyEvent> EventQueue { get; private set; }
+        public ConcurrentQueue<EngineEvt> EventQueue { get; private set; }
         private bool Running { get; set; } = true;
 
         public ConcurrentDictionary<EventType, ConcurrentBag<IEventSubscriber>> Subscribers { get; set; }
@@ -28,16 +28,19 @@ namespace Engine.Core.Managers
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _diagnosticsController = diagnosticsController ?? throw new ArgumentNullException(nameof(diagnosticsController));
 
-            EventQueue = new ConcurrentQueue<MyEvent>();
+            EventQueue = new ConcurrentQueue<EngineEvt>();
             Subscribers = new ConcurrentDictionary<EventType, ConcurrentBag<IEventSubscriber>>();
         }
 
         public async void Begin()
         {
-            await ProcessEvents();
+            while (Running)
+            {
+                await ProcessEvents();
+            }
         }
 
-        public Task PublishEvent<T>(T @event) where T : MyEvent
+        public Task PublishEvent<T>(T @event) where T : EngineEvt
         {
             EventQueue.Enqueue(@event);
             _logger.LogInformation("EventQueue now has {MessageCount} messages.", EventQueue.Count);
@@ -46,18 +49,28 @@ namespace Engine.Core.Managers
 
         private async Task ProcessEvents()
         {
-            while (Running)
+            var tasks = new List<Task>();
+
+            if (EventQueue.TryDequeue(out EngineEvt engineEvt))
             {
-                var tasks = new List<Task>();
-
-                if (EventQueue.TryDequeue(out MyEvent myEvent))
-                {
-                    _logger.LogInformation("Found event '{EventType}'. Adding publish task for subscribers.", myEvent.EventType);
-                    Subscribers[myEvent.EventType].ToList().ForEach(x => tasks.Add(x.HandleEvent(myEvent)));
-                }
-
-                await _diagnosticsController.DiagnoseTask(Task.WhenAll(tasks), "HandleEvent");
+                _logger.LogInformation("Found event '{EventType}'. Adding publish task for subscribers.", engineEvt.EventType);
+                Subscribers[engineEvt.EventType].ToList().ForEach(x => tasks.Add(x.HandleEvent(engineEvt)));
             }
+
+            await _diagnosticsController.DiagnoseTask(Task.WhenAll(tasks), "HandleEvent");
+        }
+
+        private object GetTypedEvent(EngineEvt engineEvt)
+        {
+            switch (engineEvt.EventType)
+            {
+                case EventType.KEYBOARD:
+                    return (KeyboardEvt)engineEvt;
+                default:
+                    _logger.LogError("Event type {EventType} not supported", engineEvt.EventType);
+                    break;
+            }
+            return null;
         }
 
         public bool OnOffSwitch(bool? @switch)

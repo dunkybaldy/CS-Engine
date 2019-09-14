@@ -6,9 +6,8 @@ using System.Threading.Tasks;
 
 namespace Engine.Core.Events
 {
-    public abstract class MyEvent
+    public abstract class EngineEvt : EventArgs
     {
         public EventType EventType { get; set; }
-        public object Data { get; set; }
     }
 }

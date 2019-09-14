@@ -22,8 +22,6 @@ namespace Engine.Core.Factories
 
         public Task<T> Create<T>() where T : IEntity, new()
         {
-            var entity = new T();
-
             return Task.FromResult(new T());
         }
 
@@ -33,9 +31,8 @@ namespace Engine.Core.Factories
 
             if (typeof(TParent) is IEntity3D)
             {
-                var e = (IEntity3D)entity;
-                e.ApplyModel(_assetManager.GetModel(nameof(TChild)));
-                e.ApplyTexture3D(_assetManager.GetTexture3D(nameof(TChild)));
+                var e = entity as IEntity3D;
+                e.ApplyGraphics(_assetManager.GetModel(nameof(TChild)), _assetManager.GetTexture2D(nameof(TChild)));
             }
             else
             {

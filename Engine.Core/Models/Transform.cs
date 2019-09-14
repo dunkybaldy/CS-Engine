@@ -14,6 +14,7 @@ namespace Engine.Core.Models
         public Vector2 Scale2d { get; set; }
         public Vector3 Position3d { get; set; }
         public Vector3 Scale3d { get; set; }
+        public float Angle { get; set; } = 0;
 
         public Transform() {}
 

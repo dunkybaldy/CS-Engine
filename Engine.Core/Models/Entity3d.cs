@@ -1,90 +1,60 @@
-﻿using Engine.Core.Models.Enums;
+﻿using Engine.Core.Events;
+using Engine.Core.Models.Enums;
 using Engine.Core.Models.Interfaces;
+using Microsoft.Extensions.Logging;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Engine.Core.Models
 {
     public abstract class Entity3D : IEntity3D
     {
-        protected Texture3D Texture3D { get; set; }
+        protected Texture2D Texture { get; set; }
         protected Model Model { get; set; }
+        public string ModelName { get; protected set; }
+        public string TextureName { get; protected set; }
         protected Transform Transform { get; set; }
-        protected EntityActions ActionOnEntity { get; set; }
+        protected EntityActions ActionOnEntity { get; set; } = EntityActions.UPDATEDRAW;
+        public List<EventType> SubscribedToEvents { get; protected set; }
 
         protected Entity3D()
         {
-
-        }
-
-        protected Entity3D(Transform transform, bool threeDimensional)
-        {
-            Transform = transform;
+            Transform = new Transform();
         }
 
         public EntityActions EntityLifeCycleAction() => ActionOnEntity;
 
         public virtual Task Update(GameTime gameTime)
         {
+            Transform.Angle += 1 * (float)gameTime.ElapsedGameTime.TotalSeconds;
+
             return Task.CompletedTask;
         }
 
-        //public virtual Task Render(SpriteBatch spriteBatch, GameTime gameTime)
-        //{
-        //    if (!ThreeDimensional)
-        //        spriteBatch.Draw(Texture2D, Transform.Position2d, Color.AntiqueWhite);
-        //    else
-        //    {
+        public virtual Task Render(GameTime gameTime) { throw new NotImplementedException(); }
 
-        //    }
-        //    return Task.CompletedTask;
-        //}
-
-        public virtual Task Render(GameTime gameTime)
+        public virtual Task Render(GameTime gameTime, Vector3 cameraPosition, float aspectRatio)
         {
             foreach (var mesh in Model.Meshes)
             {
                 foreach (BasicEffect effect in mesh.Effects)
                 {
-                    // We could set up custom lights, but this
-                    // is the quickest way to get somethign on screen:
                     effect.EnableDefaultLighting();
-                    // This makes lighting look more realistic on
-                    // round surfaces, but at a slight performance cost:
                     effect.PreferPerPixelLighting = true;
 
-                    // The world matrix can be used to position, rotate
-                    // or resize (scale) the model. Identity means that
-                    // the model is unrotated, drawn at the origin, and
-                    // its size is unchanged from the loaded content file.
-                    effect.World = Matrix.Identity;
-                    // Move the camera 8 units away from the origin:
-                    var cameraPosition = new Vector3(0, 8, 0);
-                    // Tell the camera to look at the origin:
+                    effect.World = GetWorldMatrix();
                     var cameraLookAtVector = Vector3.Zero;
-                    // Tell the camera that positive Z is up
                     var cameraUpVector = Vector3.UnitZ;
 
                     effect.View = Matrix.CreateLookAt(
                         cameraPosition, cameraLookAtVector, cameraUpVector);
 
-                    // We want the aspect ratio of our display to match
-                    // the entire screen's aspect ratio:
-                    float aspectRatio = 1600f / 900f;
-                    // Field of view measures how wide of a view our camera has.
-                    // Increasing this value means it has a wider view, making everything
-                    // on screen smaller. This is conceptually the same as "zooming out".
-                    // It also 
                     float fieldOfView = Microsoft.Xna.Framework.MathHelper.PiOver4;
-                    // Anything closer than this will not be drawn (will be clipped)
                     float nearClipPlane = 1;
-                    // Anything further than this will not be drawn (will be clipped)
                     float farClipPlane = 200;
 
                     effect.Projection = Matrix.CreatePerspectiveFieldOfView(
@@ -99,19 +69,46 @@ namespace Engine.Core.Models
             return Task.CompletedTask;
         }
 
-        public void ApplyModel(Model model)
+        protected virtual Matrix GetWorldMatrix()
+        {
+            const float circleRadius = 8;
+            const float heightOffGround = 3;
+
+            // this matrix moves the model "out" from the origin
+            Matrix translationMatrix = Matrix.CreateTranslation(
+                circleRadius, 0, heightOffGround);
+
+            // this matrix rotates everything around the origin
+            Matrix rotationMatrix = Matrix.CreateRotationZ(Transform.Angle);
+
+            // We combine the two to have the model move in a circle:
+            Matrix combined = translationMatrix * rotationMatrix;
+
+            return combined;
+        }
+
+        public void ApplyGraphics(Model model)
         {
             Model = model;
         }
 
-        public void ApplyTexture3D(Texture3D texture3D)
+        public void ApplyGraphics(Texture2D texture)
         {
-            Texture3D = texture3D;
+            Texture = texture;
+        }
+
+        public void ApplyGraphics(Model model, Texture2D texture)
+        {
+            Model = model;
+            Texture = texture;
         }
 
         public void ApplySoundEffects(IEnumerable<SoundEffect> soundEffects)
         {
             throw new NotImplementedException();
         }
+
+        public string GetModelName() => ModelName;
+        public string GetTextureName() => TextureName;
     }
 }

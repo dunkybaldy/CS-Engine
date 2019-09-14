@@ -17,5 +17,6 @@ namespace Engine.Core.Managers.Interfaces
         Task<List<IEntity>> UpdateEntities(GameTime gameTime);
         Task DrawEntities(GameTime gameTime);
         Task DrawEntities(GameTime gameTime, List<IEntity> entitiesToDraw);
+        void SetCameraAspectRatio(Vector3 cameraPosition, float aspectRatio);
     }
 }

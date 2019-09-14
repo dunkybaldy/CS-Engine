@@ -4,13 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Engine.Core.Events
+namespace Engine.Core.Managers.Interfaces
 {
-    public enum EventType
+    public interface IDeviceManager
     {
-        COLLISION,
-        KEYBOARD,
-        MOUSE,
-        CONTROLLER
+        Task PollState();
     }
 }

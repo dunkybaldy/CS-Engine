@@ -9,6 +9,7 @@ using Engine.Core.Models.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Logging;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -25,17 +26,24 @@ namespace Engine.Core
         public static IServiceCollection AddEngineServices(this IServiceCollection services)
         {
             services
-                .AddSingleton<ContentManager>()
+                .AddMonogameServices()
                 .AddSingleton<IAssetManager, AssetManager>()
+                .AddSingleton<IDeviceManager, DeviceManager>()
                 .AddSingleton<IEntityManager, EntityManager>()
                 .AddSingleton<IEntityFactory, EntityFactory>()
                 .AddSingleton<IEventManager, EventManager>()
-                .AddSingleton<IGraphicsDeviceService, MyGraphicsDeviceManager>()
+                //.AddSingleton<MyGraphicsDeviceManager>()
 #if DEBUG
                 .AddEngineLogging()
 #endif
                 .AddEngineDiagnostics();
             return services;
+        }
+
+        public static IServiceCollection AddMonogameServices(this IServiceCollection services)
+        {
+            return services
+                .AddSingleton<ContentManager>();
         }
 
         public static IServiceCollection AddEngineLogging(this IServiceCollection services)

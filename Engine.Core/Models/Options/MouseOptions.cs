@@ -4,13 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Engine.Core.Events
+namespace Engine.Core.Models.Options
 {
-    public enum EventType
+    public class MouseOptions
     {
-        COLLISION,
-        KEYBOARD,
-        MOUSE,
-        CONTROLLER
     }
 }

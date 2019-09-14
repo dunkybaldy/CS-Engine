@@ -132,30 +132,37 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Events\KeyboardEvt.cs" />
+    <Compile Include="Managers\DeviceManager.cs" />
+    <Compile Include="Managers\Interfaces\IDeviceManager.cs" />
     <Compile Include="Diagnostics\DiagnosticsController.cs" />
     <Compile Include="Engine.cs" />
     <Compile Include="EngineServices.cs" />
     <Compile Include="Events\EventType.cs" />
     <Compile Include="Managers\EventManager.cs" />
     <Compile Include="Events\IEventSubscriber.cs" />
-    <Compile Include="Events\MyEvent.cs" />
+    <Compile Include="Events\EngineEvt.cs" />
     <Compile Include="Factories\EntityFactory.cs" />
     <Compile Include="Factories\Interfaces\IEntityFactory.cs" />
     <Compile Include="GameApplication.cs" />
-    <Compile Include="Initialiser\MyGraphicsDeviceManager.cs" />
     <Compile Include="Managers\AssetManager.cs" />
     <Compile Include="Managers\EntityManager.cs" />
     <Compile Include="Managers\Interfaces\IAssetManager.cs" />
     <Compile Include="Managers\Interfaces\IEntityManager.cs" />
     <Compile Include="Managers\Interfaces\IEventManager.cs" />
+    <Compile Include="Managers\Interfaces\IOptionsManager.cs" />
     <Compile Include="Models\Camera.cs" />
-    <Compile Include="Models\Entity3d.cs" />
+    <Compile Include="Models\Entity3D.cs" />
     <Compile Include="Models\Enums\EntityActions.cs" />
     <Compile Include="Models\Interfaces\ICamera.cs" />
     <Compile Include="Models\Interfaces\IEntity.cs" />
     <Compile Include="Models\Interfaces\IEntity3D.cs" />
+    <Compile Include="Models\Enums\KeyboardActions.cs" />
     <Compile Include="Models\Player.cs" />
     <Compile Include="Models\Transform.cs" />
+    <Compile Include="Models\Options\ControllerOptions.cs" />
+    <Compile Include="Models\Options\KeyboardOptions.cs" />
+    <Compile Include="Models\Options\MouseOptions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -163,6 +170,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Exceptions\" />
+    <Folder Include="Models\Events\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\packages\MonoGame.Framework.WindowsDX.3.7.1.189\build\MonoGame.Framework.WindowsDX.targets" Condition="Exists('..\packages\MonoGame.Framework.WindowsDX.3.7.1.189\build\MonoGame.Framework.WindowsDX.targets')" />

@@ -1,0 +1,25 @@
+{
+  "UseDefaultSettings": true,
+  "Default": {
+    "GeneralSettings": {
+      "DesiredFramerate": 60,
+      "FpsCounterOn": false,
+      "MasterVolume": 50,
+      "AutoSaveInterval": "00:05:00"
+    },
+    "InGameSettings": {
+      "AnInGameSetting": "Yellow"
+    }
+  },
+  "User": {
+    "GeneralSettings": {
+      "DesiredFramerate": 60,
+      "FpsCounterOn": false,
+      "MasterVolume": 50,
+      "AutoSaveInterval": "00:05:00"
+    },
+    "InGameSettings": {
+      "AnInGameSetting": "Yellow"
+    }
+  }
+}

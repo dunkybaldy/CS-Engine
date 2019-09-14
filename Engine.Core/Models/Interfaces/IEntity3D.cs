@@ -12,7 +12,10 @@ namespace Engine.Core.Models.Interfaces
 {
     public interface IEntity3D : IEntity
     {
-        void ApplyModel(Model model);
-        void ApplyTexture3D(Texture3D texture3D);
+        string GetModelName();
+        string GetTextureName();
+        void ApplyGraphics(Model model);
+        void ApplyGraphics(Texture2D texture);
+        void ApplyGraphics(Model model, Texture2D texture);
     }
 }

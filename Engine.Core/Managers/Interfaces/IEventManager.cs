@@ -10,7 +10,7 @@ namespace Engine.Core.Managers.Interfaces
     public interface IEventManager
     {
         void Begin();
-        Task PublishEvent<T>(T @event) where T : MyEvent;
+        Task PublishEvent<T>(T @event) where T : EngineEvt;
         Task SubscribeToEvent(EventType eventType, IEventSubscriber subscriber);
         Task UnsubscribeFromEvent(EventType eventType, IEventSubscriber subscriber);
     }

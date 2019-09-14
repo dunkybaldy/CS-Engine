@@ -14,6 +14,7 @@ namespace Engine.Core.Managers
         public AssetManager(ContentManager contentManager)
         {
             _contentManager = contentManager ?? throw new ArgumentNullException(nameof(contentManager));
+            _contentManager.RootDirectory = "Content";
         }
 
         public Model GetModel(string assetName)
