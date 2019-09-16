@@ -9,7 +9,7 @@ namespace Engine.Core.Factories.Interfaces
 {
     public interface IEntityFactory
     {
-        Task<T> Create<T>() where T : IEntity, new();
+        Task<T> Create<T>() where T : IEntity3D, new();
         Task<TChild> Create<TParent, TChild>() where TChild : TParent, new();
     }
 }

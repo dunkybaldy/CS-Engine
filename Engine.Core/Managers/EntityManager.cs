@@ -18,39 +18,34 @@ namespace Engine.Core.Managers
     public class EntityManager : IEntityManager
     {
         private readonly IAssetManager _assetManager;
+        private readonly ICameraManager _cameraManager;
         private readonly IEntityFactory _entityFactory;
         private readonly IEventManager _eventManager;
         private readonly ILogger<EntityManager> _logger;
         private readonly Stopwatch _stopwatch;
 
-        private ConcurrentDictionary<string, IEntity> Entities { get; set; }
+        private ConcurrentDictionary<string, IEntity3D> Entities { get; set; }
 
-        private Matrix ProjectionMatrix;
-        private Matrix ViewMatrix;
-        private Matrix WorldMatrix;
-
-        public Vector3 CameraPosition { get; set; }
-        public float AspectRatio { get; set; }
-
-        public EntityManager(IAssetManager assetManager, IEntityFactory entityFactory, IEventManager eventManager, ILogger<EntityManager> logger, Stopwatch stopwatch)
+        public EntityManager(ICameraManager cameraManager, IAssetManager assetManager, IEntityFactory entityFactory, IEventManager eventManager, ILogger<EntityManager> logger, Stopwatch stopwatch)
         {
             _assetManager = assetManager ?? throw new ArgumentNullException(nameof(assetManager));
+            _cameraManager = cameraManager ?? throw new ArgumentNullException(nameof(cameraManager));
             _entityFactory = entityFactory ?? throw new ArgumentNullException(nameof(entityFactory));
             _eventManager = eventManager ?? throw new ArgumentNullException(nameof(eventManager));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _stopwatch = stopwatch ?? null;
 
-            Entities = new ConcurrentDictionary<string, IEntity>();
+            Entities = new ConcurrentDictionary<string, IEntity3D>();
         }
 
-        public async Task<T> Create<T>() where T : IEntity, new()
+        public async Task<T> Create<T>() where T : IEntity3D, new()
         {
             var entity = await _entityFactory.Create<T>();
             Entities.TryAdd($"{nameof(entity)}|{Guid.NewGuid().ToString()}", entity);
             return entity;
         }
 
-        public async Task<T> Create<T>(string id) where T : IEntity, new()
+        public async Task<T> Create<T>(string id) where T : IEntity3D, new()
         {
             var entity = await _entityFactory.Create<T>();
 
@@ -64,15 +59,15 @@ namespace Engine.Core.Managers
             return entity;
         }
 
-        public IEntity GetEntity(string id)
+        public IEntity3D GetEntity(string id)
         {
-            if (Entities.TryGetValue(id, out IEntity entity))
+            if (Entities.TryGetValue(id, out IEntity3D entity))
                 return entity;
             else
                 throw new KeyNotFoundException($"No entry in dictionary: {id}");
         }
 
-        public async Task<List<IEntity>> UpdateEntities(GameTime gameTime)
+        public async Task<List<IEntity3D>> UpdateEntities(GameTime gameTime)
         {
             var updatableEntities = Entities.Where(x => x.Value.EntityLifeCycleAction() != EntityActions.DRAW).ToList();
 
@@ -94,25 +89,11 @@ namespace Engine.Core.Managers
             await Task.WhenAll(renderTasks);
         }
 
-        public async Task DrawEntities(GameTime gameTime, List<IEntity> entitiesToDraw)
+        public async Task DrawEntities(GameTime gameTime, List<IEntity3D> entitiesToDraw)
         {
             List<Task> renderTasks = new List<Task>();
-            entitiesToDraw.ForEach(x => renderTasks.Add(x.Render(gameTime, CameraPosition, AspectRatio)));
+            entitiesToDraw.ForEach(x => renderTasks.Add(x.Render(gameTime, _cameraManager.GetMainCamera())));
             await Task.WhenAll(renderTasks);
-        }
-
-        public void SetCameraAspectRatio(Vector3 cameraPosition, float aspectRatio)
-        {
-            CameraPosition = cameraPosition;
-            AspectRatio = aspectRatio;
-        }
-
-        public Task SetViewForDraw(Matrix projectionMatrix, Matrix viewMatrix, Matrix worldMatrix)
-        {
-            //ProjectionMatrix = projectionMatrix;
-            ViewMatrix = viewMatrix;
-            //WorldMatrix = worldMatrix;
-            return Task.CompletedTask;
         }
     }
 }

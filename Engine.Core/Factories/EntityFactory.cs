@@ -20,7 +20,7 @@ namespace Engine.Core.Factories
             _assetManager = assetManager ?? throw new ArgumentNullException(nameof(assetManager));
         }
 
-        public Task<T> Create<T>() where T : IEntity, new()
+        public Task<T> Create<T>() where T : IEntity3D, new()
         {
             return Task.FromResult(new T());
         }

@@ -13,7 +13,6 @@ namespace ExampleGame
             // Transient for splitscreen, singleton for 1 entity for all players
             services
                 .AddGameOptions()
-                .AddSingleton<ICamera, Camera>()
                 .AddSingleton<TestService>();
 
             return services;

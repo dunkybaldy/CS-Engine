@@ -133,7 +133,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Events\KeyboardEvt.cs" />
+    <Compile Include="Managers\CameraManager.cs" />
     <Compile Include="Managers\DeviceManager.cs" />
+    <Compile Include="Managers\Interfaces\ICameraManager.cs" />
     <Compile Include="Managers\Interfaces\IDeviceManager.cs" />
     <Compile Include="Diagnostics\DiagnosticsController.cs" />
     <Compile Include="Engine.cs" />
@@ -154,7 +156,7 @@
     <Compile Include="Models\Camera.cs" />
     <Compile Include="Models\Entity3D.cs" />
     <Compile Include="Models\Enums\EntityActions.cs" />
-    <Compile Include="Models\Interfaces\ICamera.cs" />
+    <Compile Include="Models\Enums\EntityType.cs" />
     <Compile Include="Models\Interfaces\IEntity.cs" />
     <Compile Include="Models\Interfaces\IEntity3D.cs" />
     <Compile Include="Models\Enums\KeyboardActions.cs" />
