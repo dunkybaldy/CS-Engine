@@ -15,6 +15,8 @@ namespace ExampleGame
 {
     public class Game1 : GameApplication
     {
+        private double UpdateTime { get; set; }
+
         public Game1(
             ICameraManager cameraManager,
             IDeviceManager deviceManager,
@@ -49,9 +51,19 @@ namespace ExampleGame
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
 
-            await _cameraManager.Update(gameTime);
+            if (DrawState.Count < 10)
+            {
+                UpdateTime += gameTime.ElapsedGameTime.TotalSeconds;
+                var updateTime = 1D / 60;
 
-            await base.UpdateAsync(gameTime);            
+                while (UpdateTime >= updateTime)
+                {
+                    await _cameraManager.Update(gameTime);
+
+                    await base.UpdateAsync(gameTime);
+                    UpdateTime -= updateTime;
+                }
+            }
         }
 
         protected override async Task DrawAsync(GameTime gameTime)

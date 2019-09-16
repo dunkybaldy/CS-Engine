@@ -27,7 +27,7 @@ namespace Engine.Core
 
         protected string GameTitle { get; set; } = "Game";
 
-        private ConcurrentQueue<ConcurrentBag<IEntity3D>> DrawState { get; set; }
+        protected ConcurrentQueue<ConcurrentBag<IEntity3D>> DrawState { get; set; }
 
         public GameApplication(
             ICameraManager cameraManager,
