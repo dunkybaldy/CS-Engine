@@ -16,13 +16,15 @@ namespace ExampleGame
     public class Game1 : GameApplication
     {
         public Game1(
-            ICameraManager cameraManager,
+            //ICameraManager cameraManager,
             IDeviceManager deviceManager,
             IEntityManager entityManager,
             IEventManager eventManager,
             DiagnosticsController diagnosticsController,
             ILogger<Game1> logger)
-            : base(cameraManager, deviceManager, entityManager, eventManager, diagnosticsController, logger)
+            : base(
+                  //cameraManager, 
+                  deviceManager, entityManager, eventManager, diagnosticsController, logger)
         {
         }
 
@@ -43,7 +45,7 @@ namespace ExampleGame
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
 
-            await _cameraManager.Update(gameTime);
+            //await _cameraManager.Update(gameTime);
 
             await base.UpdateAsync(gameTime);
         }
