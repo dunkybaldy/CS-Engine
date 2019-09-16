@@ -8,7 +8,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
-
+using System;
 using System.Threading.Tasks;
 
 namespace ExampleGame
@@ -26,6 +26,9 @@ namespace ExampleGame
                   cameraManager,
                   deviceManager, entityManager, eventManager, diagnosticsController, logger)
         {
+            //_graphicsDeviceManager.SynchronizeWithVerticalRetrace = false; //Vsync
+            //IsFixedTimeStep = true;
+            //TargetElapsedTime = TimeSpan.FromMilliseconds(1000.0f / 1000);
         }
 
         protected override async Task InitialiseAsync()
@@ -48,7 +51,7 @@ namespace ExampleGame
 
             await _cameraManager.Update(gameTime);
 
-            await base.UpdateAsync(gameTime);
+            await base.UpdateAsync(gameTime);            
         }
 
         protected override async Task DrawAsync(GameTime gameTime)
