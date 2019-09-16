@@ -16,14 +16,14 @@ namespace ExampleGame
     public class Game1 : GameApplication
     {
         public Game1(
-            //ICameraManager cameraManager,
+            ICameraManager cameraManager,
             IDeviceManager deviceManager,
             IEntityManager entityManager,
             IEventManager eventManager,
             DiagnosticsController diagnosticsController,
             ILogger<Game1> logger)
             : base(
-                  //cameraManager, 
+                  cameraManager,
                   deviceManager, entityManager, eventManager, diagnosticsController, logger)
         {
         }
@@ -32,7 +32,8 @@ namespace ExampleGame
         {
             await base.InitialiseAsync();
 
-            await _entityManager.Create<Robot>("Robot|1");
+            var blob = await _entityManager.Create<Robot>("Robot|1");
+            _cameraManager.GetMainCamera().CameraTarget = blob.GetPosition();
         }
 
         protected override async Task UnloadContentAsync()
@@ -45,7 +46,7 @@ namespace ExampleGame
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
 
-            //await _cameraManager.Update(gameTime);
+            await _cameraManager.Update(gameTime);
 
             await base.UpdateAsync(gameTime);
         }

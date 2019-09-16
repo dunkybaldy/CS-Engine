@@ -11,17 +11,20 @@ namespace Engine.Core.Managers
 {
     public class CameraManager : ICameraManager
     {
-        private readonly GraphicsDeviceManager _graphicsDeviceManager;
+        protected GraphicsDeviceManager _graphicsDeviceManager { get; set; }
         private float AspectRatio { get; set; }        
         public Dictionary<int, Camera> Cameras { get; set; }
         private int Id { get; set; }
 
-        public CameraManager(IGraphicsDeviceManager graphicsDeviceManager)
+        public CameraManager()
         {
-            _graphicsDeviceManager = (GraphicsDeviceManager)graphicsDeviceManager;
+            Cameras = new Dictionary<int, Camera>();            
+        }
+
+        public void SetGraphicsDeviceManager(GraphicsDeviceManager graphicsDeviceManager)
+        {
+            _graphicsDeviceManager = graphicsDeviceManager;
             AspectRatio = _graphicsDeviceManager.PreferredBackBufferWidth / (float)_graphicsDeviceManager.PreferredBackBufferHeight;
-            
-            Cameras = new Dictionary<int, Camera>();
             CreateCamera(); // There must always be at least one camera
         }
 

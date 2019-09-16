@@ -10,6 +10,7 @@ namespace Engine.Core.Managers.Interfaces
 {
     public interface ICameraManager
     {
+        void SetGraphicsDeviceManager(GraphicsDeviceManager graphicsDeviceManager);
         Task Update(GameTime gameTime);
         Camera GetMainCamera();
     }

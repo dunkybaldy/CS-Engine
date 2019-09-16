@@ -13,7 +13,13 @@ namespace Engine.Core.Models
         public float Angle { get; set; } = 0;
         public Matrix TranslationMatrix { get; set; }
         public Matrix RotationMatrix { get; set; }
-        public Matrix WorldMatrix { get; set; }
+        public Matrix WorldMatrix
+        {
+            get
+            {
+                return TranslationMatrix * RotationMatrix;
+            }
+        }
 
         public Transform()
         {
@@ -23,7 +29,6 @@ namespace Engine.Core.Models
             Scale3d = new Vector3();
             TranslationMatrix = new Matrix();
             RotationMatrix = new Matrix();
-            WorldMatrix = new Matrix();
         }
         public Transform(EntityType type)
         {
@@ -38,7 +43,6 @@ namespace Engine.Core.Models
                     Scale3d = new Vector3();
                     TranslationMatrix = new Matrix();
                     RotationMatrix = new Matrix();
-                    WorldMatrix = new Matrix();
                     break;
                 default:
                     break;

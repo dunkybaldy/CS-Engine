@@ -16,7 +16,7 @@ namespace Engine.Core
 {
     public class GameApplication : Game
     {
-        //protected readonly ICameraManager _cameraManager;
+        protected readonly ICameraManager _cameraManager;
         protected readonly IDeviceManager _deviceManager;
         protected readonly IEntityManager _entityManager;
         protected readonly IEventManager _eventManager;
@@ -30,7 +30,7 @@ namespace Engine.Core
         private ConcurrentQueue<ConcurrentBag<IEntity3D>> DrawState { get; set; }
 
         public GameApplication(
-            //ICameraManager cameraManager,
+            ICameraManager cameraManager,
             IDeviceManager deviceManager,
             IEntityManager entityManager,
             IEventManager eventManager,
@@ -39,7 +39,7 @@ namespace Engine.Core
         {
             Content.RootDirectory = "Content";
 
-            //_cameraManager = cameraManager ?? throw new ArgumentNullException(nameof(cameraManager));
+            _cameraManager = cameraManager ?? throw new ArgumentNullException(nameof(cameraManager));
             _deviceManager = deviceManager ?? throw new ArgumentNullException(nameof(deviceManager));
             _entityManager = entityManager ?? throw new ArgumentNullException(nameof(entityManager));
             _eventManager = eventManager ?? throw new ArgumentNullException(nameof(eventManager));
@@ -47,6 +47,8 @@ namespace Engine.Core
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
 
             _graphicsDeviceManager = new GraphicsDeviceManager(this);
+
+            _cameraManager.SetGraphicsDeviceManager(_graphicsDeviceManager);
 
             DrawState = new ConcurrentQueue<ConcurrentBag<IEntity3D>>();
         }

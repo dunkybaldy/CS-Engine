@@ -31,12 +31,12 @@ namespace Engine.Core.Models
 
         public virtual Task Update(GameTime gameTime)
         {
-            Transform.Angle += 1 * (float)gameTime.ElapsedGameTime.TotalSeconds;
-            Transform.Position3d += new Vector3(8, 0, 0);
+            var secs = (float)gameTime.ElapsedGameTime.TotalSeconds;
+            Transform.Angle += 1 * secs;
+            Transform.Position3d += new Vector3(1 * secs, 0 * secs, 0 * secs);
 
             Transform.TranslationMatrix = Matrix.CreateTranslation(Transform.Position3d);
             Transform.RotationMatrix = Matrix.CreateRotationZ(Transform.Angle);
-            Transform.WorldMatrix = Transform.TranslationMatrix * Transform.RotationMatrix;
 
             return Task.CompletedTask;
         }
@@ -54,6 +54,7 @@ namespace Engine.Core.Models
 
                     effect.World = Transform.WorldMatrix;
                     effect.View = camera.ViewMatrix;
+                    effect.Projection = camera.ProjectionMatrix;
                 }
 
                 // Now that we've assigned our properties on the effects we can
