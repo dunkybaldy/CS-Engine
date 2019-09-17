@@ -24,7 +24,7 @@ namespace Engine.Core.Managers
         private readonly ILogger<EntityManager> _logger;
         private readonly Stopwatch _stopwatch;
 
-        private ConcurrentDictionary<string, IEntity3D> Entities { get; set; }
+        private ConcurrentDictionary<string, IEntity> Entities { get; set; }
 
         public EntityManager(
             ICameraManager cameraManager,
@@ -37,17 +37,17 @@ namespace Engine.Core.Managers
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _stopwatch = stopwatch ?? null;
 
-            Entities = new ConcurrentDictionary<string, IEntity3D>();
+            Entities = new ConcurrentDictionary<string, IEntity>();
         }
 
-        public async Task<T> Create<T>() where T : IEntity3D, new()
+        public async Task<T> Create<T>() where T : IEntity, new()
         {
             var entity = await _entityFactory.Create<T>();
             Entities.TryAdd($"{nameof(entity)}|{Guid.NewGuid().ToString()}", entity);
             return entity;
         }
 
-        public async Task<T> Create<T>(string id) where T : IEntity3D, new()
+        public async Task<T> Create<T>(string id) where T : IEntity, new()
         {
             var entity = await _entityFactory.Create<T>();
 
@@ -61,15 +61,15 @@ namespace Engine.Core.Managers
             return entity;
         }
 
-        public IEntity3D GetEntity(string id)
+        public IEntity GetEntity(string id)
         {
-            if (Entities.TryGetValue(id, out IEntity3D entity))
+            if (Entities.TryGetValue(id, out IEntity entity))
                 return entity;
             else
                 throw new KeyNotFoundException($"No entry in dictionary: {id}");
         }
 
-        public async Task<List<IEntity3D>> UpdateEntities(GameTime gameTime)
+        public async Task<List<IEntity>> UpdateEntities(GameTime gameTime)
         {
             var updatableEntities = Entities.Where(x => x.Value.EntityLifeCycleAction() != EntityActions.DRAW).ToList();
 
@@ -91,7 +91,7 @@ namespace Engine.Core.Managers
             await Task.WhenAll(renderTasks);
         }
 
-        public async Task DrawEntities(GameTime gameTime, List<IEntity3D> entitiesToDraw)
+        public async Task DrawEntities(GameTime gameTime, List<IEntity> entitiesToDraw)
         {
             List<Task> renderTasks = new List<Task>();
             entitiesToDraw.ForEach(x => renderTasks.Add(x.Render(gameTime, _cameraManager.GetMainCamera())));

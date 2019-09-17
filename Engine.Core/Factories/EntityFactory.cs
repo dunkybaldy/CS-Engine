@@ -1,12 +1,8 @@
 ﻿using Engine.Core.Factories.Interfaces;
 using Engine.Core.Managers.Interfaces;
-using Engine.Core.Models;
 using Engine.Core.Models.Interfaces;
+
 using System;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Engine.Core.Factories
@@ -20,7 +16,7 @@ namespace Engine.Core.Factories
             _assetManager = assetManager ?? throw new ArgumentNullException(nameof(assetManager));
         }
 
-        public Task<T> Create<T>() where T : IEntity3D, new()
+        public Task<T> Create<T>() where T : IEntity, new()
         {
             return Task.FromResult(new T());
         }

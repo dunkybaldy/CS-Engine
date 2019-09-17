@@ -27,7 +27,7 @@ namespace Engine.Core
 
         protected string GameTitle { get; set; } = "Game";
 
-        protected ConcurrentQueue<ConcurrentBag<IEntity3D>> DrawState { get; set; }
+        protected ConcurrentQueue<ConcurrentBag<IEntity>> DrawState { get; set; }
 
         public GameApplication(
             ICameraManager cameraManager,
@@ -50,7 +50,7 @@ namespace Engine.Core
 
             _cameraManager.SetGraphicsDeviceManager(_graphicsDeviceManager);
 
-            DrawState = new ConcurrentQueue<ConcurrentBag<IEntity3D>>();
+            DrawState = new ConcurrentQueue<ConcurrentBag<IEntity>>();
         }
 
         protected virtual Task InitialiseAsync()
@@ -109,7 +109,7 @@ namespace Engine.Core
                 var entitiesToEnqueue = await _entityManager.UpdateEntities(gameTime);
 
                 // Not equal to update because we only want to draw entities which can be drawn
-                var bag = new ConcurrentBag<IEntity3D>(entitiesToEnqueue.Where(x => x.EntityLifeCycleAction() != EntityActions.UPDATE));
+                var bag = new ConcurrentBag<IEntity>(entitiesToEnqueue.Where(x => x.EntityLifeCycleAction() != EntityActions.UPDATE));
 
                 DrawState.Enqueue(bag);
 
@@ -126,7 +126,7 @@ namespace Engine.Core
         {
             try
             {
-                if (DrawState.TryDequeue(out ConcurrentBag<IEntity3D> entitiesToDraw))
+                if (DrawState.TryDequeue(out ConcurrentBag<IEntity> entitiesToDraw))
                     await _entityManager.DrawEntities(gameTime, entitiesToDraw.ToList());
                 else
                     _logger.LogWarning("Attempted to dequeue from DrawState but returned false");

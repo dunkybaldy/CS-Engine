@@ -11,11 +11,11 @@ namespace Engine.Core.Managers.Interfaces
 {
     public interface IEntityManager
     {
-        Task<T> Create<T>() where T : IEntity3D, new();
-        Task<T> Create<T>(string id) where T : IEntity3D, new();
-        IEntity3D GetEntity(string id);
-        Task<List<IEntity3D>> UpdateEntities(GameTime gameTime);
+        Task<T> Create<T>() where T : IEntity, new();
+        Task<T> Create<T>(string id) where T : IEntity, new();
+        IEntity GetEntity(string id);
+        Task<List<IEntity>> UpdateEntities(GameTime gameTime);
         Task DrawEntities(GameTime gameTime);
-        Task DrawEntities(GameTime gameTime, List<IEntity3D> entitiesToDraw);
+        Task DrawEntities(GameTime gameTime, List<IEntity> entitiesToDraw);
     }
 }
