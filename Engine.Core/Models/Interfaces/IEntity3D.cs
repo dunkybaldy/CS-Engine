@@ -17,5 +17,6 @@ namespace Engine.Core.Models.Interfaces
         void ApplyGraphics(Model model);
         void ApplyGraphics(Texture2D texture);
         void ApplyGraphics(Model model, Texture2D texture);
+        Vector3 GetPosition();
     }
 }

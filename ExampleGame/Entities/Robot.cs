@@ -20,5 +20,12 @@ namespace ExampleGame.Entities
 
             ActionOnEntity = EntityActions.UPDATEDRAW;
         }
+
+        public override Task Render(GameTime gameTime, Camera camera)
+        {
+            camera.UpdateTarget(Transform.Position3d);
+
+            return base.Render(gameTime, camera);
+        }
     }
 }

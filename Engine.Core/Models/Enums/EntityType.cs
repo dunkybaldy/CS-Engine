@@ -4,9 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Engine.Core.Models.Interfaces
+namespace Engine.Core.Models.Enums
 {
-    public interface ICamera
+    public enum EntityType
     {
+        _2D,
+        _3D
     }
 }

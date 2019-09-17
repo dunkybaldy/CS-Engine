@@ -18,6 +18,7 @@ namespace Engine.Core.Managers
     public class EntityManager : IEntityManager
     {
         private readonly IAssetManager _assetManager;
+        private readonly ICameraManager _cameraManager;
         private readonly IEntityFactory _entityFactory;
         private readonly IEventManager _eventManager;
         private readonly ILogger<EntityManager> _logger;
@@ -25,16 +26,12 @@ namespace Engine.Core.Managers
 
         private ConcurrentDictionary<string, IEntity> Entities { get; set; }
 
-        private Matrix ProjectionMatrix;
-        private Matrix ViewMatrix;
-        private Matrix WorldMatrix;
-
-        public Vector3 CameraPosition { get; set; }
-        public float AspectRatio { get; set; }
-
-        public EntityManager(IAssetManager assetManager, IEntityFactory entityFactory, IEventManager eventManager, ILogger<EntityManager> logger, Stopwatch stopwatch)
+        public EntityManager(
+            ICameraManager cameraManager,
+            IAssetManager assetManager, IEntityFactory entityFactory, IEventManager eventManager, ILogger<EntityManager> logger, Stopwatch stopwatch)
         {
             _assetManager = assetManager ?? throw new ArgumentNullException(nameof(assetManager));
+            _cameraManager = cameraManager ?? throw new ArgumentNullException(nameof(cameraManager));
             _entityFactory = entityFactory ?? throw new ArgumentNullException(nameof(entityFactory));
             _eventManager = eventManager ?? throw new ArgumentNullException(nameof(eventManager));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
@@ -97,22 +94,8 @@ namespace Engine.Core.Managers
         public async Task DrawEntities(GameTime gameTime, List<IEntity> entitiesToDraw)
         {
             List<Task> renderTasks = new List<Task>();
-            entitiesToDraw.ForEach(x => renderTasks.Add(x.Render(gameTime, CameraPosition, AspectRatio)));
+            entitiesToDraw.ForEach(x => renderTasks.Add(x.Render(gameTime, _cameraManager.GetMainCamera())));
             await Task.WhenAll(renderTasks);
-        }
-
-        public void SetCameraAspectRatio(Vector3 cameraPosition, float aspectRatio)
-        {
-            CameraPosition = cameraPosition;
-            AspectRatio = aspectRatio;
-        }
-
-        public Task SetViewForDraw(Matrix projectionMatrix, Matrix viewMatrix, Matrix worldMatrix)
-        {
-            //ProjectionMatrix = projectionMatrix;
-            ViewMatrix = viewMatrix;
-            //WorldMatrix = worldMatrix;
-            return Task.CompletedTask;
         }
     }
 }

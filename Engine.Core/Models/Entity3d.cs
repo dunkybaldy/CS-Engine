@@ -18,26 +18,36 @@ namespace Engine.Core.Models
         public string ModelName { get; protected set; }
         public string TextureName { get; protected set; }
         protected Transform Transform { get; set; }
-        protected EntityActions ActionOnEntity { get; set; } = EntityActions.UPDATEDRAW;
+        protected float RotationSpeed { get; set; }
+        protected Vector3 TranslationSpeed { get; set; }
+        public EntityActions ActionOnEntity { get; protected set; } = EntityActions.UPDATEDRAW;
         public List<EventType> SubscribedToEvents { get; protected set; }
+        public EntityType EntityType = EntityType._3D;
 
         protected Entity3D()
         {
-            Transform = new Transform();
+            Transform = new Transform(EntityType);
+            RotationSpeed = 10;
+            TranslationSpeed = new Vector3(0, 0, 0);
         }
 
         public EntityActions EntityLifeCycleAction() => ActionOnEntity;
 
         public virtual Task Update(GameTime gameTime)
         {
-            Transform.Angle += 1 * (float)gameTime.ElapsedGameTime.TotalSeconds;
+            var secs = (float)gameTime.ElapsedGameTime.TotalSeconds;
+            Transform.Angle += 1 * secs;
+            Transform.Position3d += TranslationSpeed * secs;
+
+            Transform.TranslationMatrix = Matrix.CreateTranslation(Transform.Position3d);
+            Transform.RotationMatrix = Matrix.CreateRotationZ(Transform.Angle);
 
             return Task.CompletedTask;
         }
 
         public virtual Task Render(GameTime gameTime) { throw new NotImplementedException(); }
 
-        public virtual Task Render(GameTime gameTime, Vector3 cameraPosition, float aspectRatio)
+        public virtual Task Render(GameTime gameTime, Camera camera)
         {
             foreach (var mesh in Model.Meshes)
             {
@@ -46,19 +56,9 @@ namespace Engine.Core.Models
                     effect.EnableDefaultLighting();
                     effect.PreferPerPixelLighting = true;
 
-                    effect.World = GetWorldMatrix();
-                    var cameraLookAtVector = Vector3.Zero;
-                    var cameraUpVector = Vector3.UnitZ;
-
-                    effect.View = Matrix.CreateLookAt(
-                        cameraPosition, cameraLookAtVector, cameraUpVector);
-
-                    float fieldOfView = Microsoft.Xna.Framework.MathHelper.PiOver4;
-                    float nearClipPlane = 1;
-                    float farClipPlane = 200;
-
-                    effect.Projection = Matrix.CreatePerspectiveFieldOfView(
-                        fieldOfView, aspectRatio, nearClipPlane, farClipPlane);
+                    effect.World = Transform.WorldMatrix;
+                    effect.View = camera.ViewMatrix;
+                    effect.Projection = camera.ProjectionMatrix;
                 }
 
                 // Now that we've assigned our properties on the effects we can
@@ -69,22 +69,9 @@ namespace Engine.Core.Models
             return Task.CompletedTask;
         }
 
-        protected virtual Matrix GetWorldMatrix()
+        public Vector3 GetPosition()
         {
-            const float circleRadius = 8;
-            const float heightOffGround = 3;
-
-            // this matrix moves the model "out" from the origin
-            Matrix translationMatrix = Matrix.CreateTranslation(
-                circleRadius, 0, heightOffGround);
-
-            // this matrix rotates everything around the origin
-            Matrix rotationMatrix = Matrix.CreateRotationZ(Transform.Angle);
-
-            // We combine the two to have the model move in a circle:
-            Matrix combined = translationMatrix * rotationMatrix;
-
-            return combined;
+            return Transform.Position3d;
         }
 
         public void ApplyGraphics(Model model)

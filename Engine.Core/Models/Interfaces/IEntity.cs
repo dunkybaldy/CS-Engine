@@ -16,6 +16,6 @@ namespace Engine.Core.Models.Interfaces
         void ApplySoundEffects(IEnumerable<SoundEffect> soundEffects);
         Task Update(GameTime gameTime);
         Task Render(GameTime gameTime);
-        Task Render(GameTime gameTime, Vector3 cameraPosition, float aspectRatio);
+        Task Render(GameTime gameTime, Camera camera);
     }
 }

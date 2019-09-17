@@ -1,10 +1,6 @@
-﻿using Engine.Core.Models.Interfaces;
+﻿using Engine.Core.Models.Enums;
+
 using Microsoft.Xna.Framework;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Engine.Core.Models
 {
@@ -15,19 +11,42 @@ namespace Engine.Core.Models
         public Vector3 Position3d { get; set; }
         public Vector3 Scale3d { get; set; }
         public float Angle { get; set; } = 0;
-
-        public Transform() {}
-
-        public Transform(Vector2 position2d, Vector2 scale2d)
+        public Matrix TranslationMatrix { get; set; }
+        public Matrix RotationMatrix { get; set; }
+        public Matrix WorldMatrix
         {
-            Position2d = position2d;
-            Scale2d = scale2d;
+            get
+            {
+                return TranslationMatrix * RotationMatrix;
+            }
         }
 
-        public Transform(Vector3 position3d, Vector3 scale3d)
+        public Transform()
         {
-            Position3d = position3d;
-            Scale3d = scale3d;
+            Position2d = new Vector2();
+            Scale2d = new Vector2();
+            Position3d = new Vector3();
+            Scale3d = new Vector3();
+            TranslationMatrix = new Matrix();
+            RotationMatrix = new Matrix();
+        }
+        public Transform(EntityType type)
+        {
+            switch (type)
+            {
+                case EntityType._2D:
+                    Position2d = new Vector2();
+                    Scale2d = new Vector2();
+                    break;
+                case EntityType._3D:
+                    Position3d = new Vector3();
+                    Scale3d = new Vector3();
+                    TranslationMatrix = new Matrix();
+                    RotationMatrix = new Matrix();
+                    break;
+                default:
+                    break;
+            }
         }
     }
 }

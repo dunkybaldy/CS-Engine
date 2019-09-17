@@ -8,52 +8,37 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
-
+using System;
 using System.Threading.Tasks;
 
 namespace ExampleGame
 {
     public class Game1 : GameApplication
     {
-        //Camera
-        private Vector3 camTarget;
-        private Vector3 camPosition;
-        private float aspectRatio;
+        private double UpdateTime { get; set; }
 
-        ////BasicEffect for rendering
-        private BasicEffect basicEffect;
-
-        //Geometric info
-        //private VertexPositionColor[] triangleVertices;
-        //private VertexBuffer vertexBuffer;
-
-        //Orbit
-        private bool orbit = false;
-
-        /// <summary>
-        /// Curently messy initialisation
-        /// </summary>
-        /// <param name="entityManager"></param>
-        /// <param name="diagnosticsController"></param>
-        /// <param name="logger"></param>
         public Game1(
+            ICameraManager cameraManager,
             IDeviceManager deviceManager,
             IEntityManager entityManager,
             IEventManager eventManager,
             DiagnosticsController diagnosticsController,
             ILogger<Game1> logger)
-            : base(deviceManager, entityManager, eventManager, diagnosticsController, logger)
+            : base(
+                  cameraManager,
+                  deviceManager, entityManager, eventManager, diagnosticsController, logger)
         {
+            //_graphicsDeviceManager.SynchronizeWithVerticalRetrace = false; //Vsync
+            //IsFixedTimeStep = true;
+            //TargetElapsedTime = TimeSpan.FromMilliseconds(1000.0f / 1000);
         }
 
         protected override async Task InitialiseAsync()
         {
             await base.InitialiseAsync();
 
-            await _entityManager.Create<Robot>("Robot|1");
-
-            camPosition = new Vector3(15, 10, 10);
-            basicEffect = new BasicEffect(GraphicsDevice);
+            var blob = await _entityManager.Create<Robot>("Robot|1");
+            _cameraManager.GetMainCamera().CameraTarget = blob.GetPosition();
         }
 
         protected override async Task UnloadContentAsync()
@@ -66,54 +51,23 @@ namespace ExampleGame
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
 
-            //if (Keyboard.GetState().IsKeyDown(Keys.Left))
-            //{
-            //    camPosition.X -= 1f;
-            //    camTarget.X -= 1f;
-            //}
-            //if (Keyboard.GetState().IsKeyDown(Keys.Right))
-            //{
-            //    camPosition.X += 1f;
-            //    camTarget.X += 1f;
-            //}
-            //if (Keyboard.GetState().IsKeyDown(Keys.Up))
-            //{
-            //    camPosition.Y -= 1f;
-            //    camTarget.Y -= 1f;
-            //}
-            //if (Keyboard.GetState().IsKeyDown(Keys.Down))
-            //{
-            //    camPosition.Y += 1f;
-            //    camTarget.Y += 1f;
-            //}
-            //if (Keyboard.GetState().IsKeyDown(Keys.OemPlus))
-            //{
-            //    camPosition.Z += 1f;
-            //}
-            //if (Keyboard.GetState().IsKeyDown(Keys.OemMinus))
-            //{
-            //    camPosition.Z -= 1f;
-            //}
-            if (Keyboard.GetState().IsKeyDown(Keys.Space))
+            if (DrawState.Count < 10)
             {
-                orbit = !orbit;
-            }
+                UpdateTime += gameTime.ElapsedGameTime.TotalSeconds;
+                var updateTime = 1D / 60;
 
-            if (orbit)
-            {
-                Matrix rotationMatrix = Matrix.CreateRotationY(MathHelper.ToRadians(1f));
-                camPosition = Vector3.Transform(camPosition, rotationMatrix);
-            }
-            _logger.LogInformation($"camPos: {camPosition}, camTarget: {camTarget}");
+                while (UpdateTime >= updateTime)
+                {
+                    await _cameraManager.Update(gameTime);
 
-            await base.UpdateAsync(gameTime);
+                    await base.UpdateAsync(gameTime);
+                    UpdateTime -= updateTime;
+                }
+            }
         }
 
         protected override async Task DrawAsync(GameTime gameTime)
         {
-            aspectRatio = _graphicsDeviceManager.PreferredBackBufferWidth / (float)_graphicsDeviceManager.PreferredBackBufferHeight;            
-            _entityManager.SetCameraAspectRatio(camPosition, aspectRatio);
-
             GraphicsDevice.Clear(Color.CornflowerBlue);
             GraphicsDevice.RasterizerState = new RasterizerState
             {

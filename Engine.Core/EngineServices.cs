@@ -19,6 +19,7 @@ namespace Engine.Core
             services
                 .AddMonogameServices()
                 .AddSingleton<IAssetManager, AssetManager>()
+                .AddSingleton<ICameraManager, CameraManager>()
                 .AddSingleton<IDeviceManager, DeviceManager>()
                 .AddSingleton<IEntityManager, EntityManager>()
                 .AddSingleton<IEntityFactory, EntityFactory>()

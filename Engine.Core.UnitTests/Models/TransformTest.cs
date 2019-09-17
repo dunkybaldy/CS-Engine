@@ -22,12 +22,9 @@ namespace Engine.Core.UnitTests.Models
         [Test]
         public void TransformFunctions()
         {
-            var Test2d = new Transform(
-                new Vector2(1, 1),
-                new Vector2(1, 1)
-            );
+            var Test2d = new Transform(Core.Models.Enums.EntityType._2D);
             var transformBy = new Vector2(2, -1);
-            var expected = new Vector2(3, 0);
+            var expected = new Vector2(2, -1);
 
             Test2d.Position2d += transformBy;
 
