@@ -1,5 +1,11 @@
 ### Monogame Engine Changelog
 
+##### 17/092019 - dunkybaldy
+* Single transformation class holds entity position and rotation and other locational/directional data
+* Created a camera and cameramanager
+* Camera passed into entity render method, to lock onto an entity, override render in child class and update camera target
+* Anything which requires a graphics device manager will need to have it inserted after game class has been instantiated as it will cause a circular reference during the DI stage
+
 ##### 14/09/2019 - dunkybaldy
 * Add engine diagnostics, can wrap targeted functions in a diagnose function from the controller
 * Initial work to add event management, starting with keyboard (TODO)
