@@ -29,7 +29,6 @@ namespace Engine.Core.Models
         {
             AspectRatio = aspectRatio;
             Transform.Position3d = new Vector3(15, 10, 10);
-            //ViewMatrix = Matrix.CreateLookAt(Transform.Position3d, Vector3.Zero, Vector3.UnitZ);
         }
 
         public void UpdateTarget(Vector3 target) => CameraTarget = target;

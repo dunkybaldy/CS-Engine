@@ -18,6 +18,8 @@ namespace Engine.Core.Models
         public string ModelName { get; protected set; }
         public string TextureName { get; protected set; }
         protected Transform Transform { get; set; }
+        protected float RotationSpeed { get; set; }
+        protected Vector3 TranslationSpeed { get; set; }
         public EntityActions ActionOnEntity { get; protected set; } = EntityActions.UPDATEDRAW;
         public List<EventType> SubscribedToEvents { get; protected set; }
         public EntityType EntityType = EntityType._3D;
@@ -25,6 +27,8 @@ namespace Engine.Core.Models
         protected Entity3D()
         {
             Transform = new Transform(EntityType);
+            RotationSpeed = 10;
+            TranslationSpeed = new Vector3(0, 0, 0);
         }
 
         public EntityActions EntityLifeCycleAction() => ActionOnEntity;
@@ -33,7 +37,7 @@ namespace Engine.Core.Models
         {
             var secs = (float)gameTime.ElapsedGameTime.TotalSeconds;
             Transform.Angle += 1 * secs;
-            Transform.Position3d += new Vector3(1 * secs, 0 * secs, 0 * secs);
+            Transform.Position3d += TranslationSpeed * secs;
 
             Transform.TranslationMatrix = Matrix.CreateTranslation(Transform.Position3d);
             Transform.RotationMatrix = Matrix.CreateRotationZ(Transform.Angle);
