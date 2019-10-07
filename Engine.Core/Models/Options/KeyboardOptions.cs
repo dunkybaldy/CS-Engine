@@ -6,6 +6,6 @@ namespace Engine.Core.Models.Options
 {
     public class KeyboardOptions
     {
-        public Dictionary<string, KeyboardActions> BoundKeyActions { get; set; }
+        public List<KeyAction> KeyActions { get; set; } = new List<KeyAction>();
     }
 }

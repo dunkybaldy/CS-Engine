@@ -1,6 +1,11 @@
 ### Monogame Engine Changelog
 
-##### 17/092019 - dunkybaldy
+##### 07/10/2019 - dunkybaldy
+* Add input manager which uses device manager to poll for input events and send to event manager
+* Problems:
+	* On pressing unbound key, halts all input acknowledgement
+
+##### 17/09/2019 - dunkybaldy
 * Single transformation class holds entity position and rotation and other locational/directional data
 * Created a camera and cameramanager
 * Camera passed into entity render method, to lock onto an entity, override render in child class and update camera target

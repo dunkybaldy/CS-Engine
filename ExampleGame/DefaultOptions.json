@@ -1,0 +1,30 @@
+{
+  "GeneralSettings": {
+    "DesiredFramerate": 60,
+    "FpsCounterOn": false,
+    "MasterVolume": 50,
+    "AutoSaveInterval": "00:05:00"
+  },
+  "InGameSettings": {
+    "AnInGameSetting": "Yellow"
+  },
+  "KeyBindings": {
+    "KeyActions": [
+      {
+        "ActionName": "JUMP",
+        "KeyName": "Space",
+        "KeyboardAction": "ON_PRESS"
+      },
+      {
+        "ActionName": "MOVE_FORWARD",
+        "KeyName": "W",
+        "KeyboardAction": "ON_HOLD"
+      },
+      {
+        "ActionName": "EXIT",
+        "KeyName": "Escape",
+        "KeyboardAction": "ON_PRESS"
+      }
+    ]
+  }
+}

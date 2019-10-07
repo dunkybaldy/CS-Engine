@@ -24,6 +24,7 @@ namespace Engine.Core
                 .AddSingleton<IEntityManager, EntityManager>()
                 .AddSingleton<IEntityFactory, EntityFactory>()
                 .AddSingleton<IEventManager, EventManager>()
+                .AddSingleton<IInputManager, InputManager>()
 #if DEBUG
                 .AddEngineLogging()
 #endif

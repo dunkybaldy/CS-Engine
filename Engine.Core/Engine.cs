@@ -26,6 +26,7 @@ namespace Engine.Core
                 var services = new ServiceCollection().Initialise(gameServices);
                 var serviceProvider = BuildServices<T>(services);
 
+                Task.Factory.StartNew(RunInputSystem(serviceProvider));
                 // Add per thread methods here
                 Task.Factory.StartNew(RunEventSystem(serviceProvider));
 
@@ -85,7 +86,13 @@ namespace Engine.Core
         private static Action RunEventSystem(IServiceProvider services)
         {
             var eventSystem = services.GetRequiredService<IEventManager>();
-            return () => eventSystem.Begin();
+            return () => eventSystem.Run();
+        }
+
+        private static Action RunInputSystem(IServiceProvider services)
+        {
+            var inputSystem = services.GetRequiredService<IInputManager>();
+            return () => inputSystem.Run();
         }
 
         private class EngineInitialiser

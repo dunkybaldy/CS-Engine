@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework.Input;
+﻿using Engine.Core.Models.Options;
+using Microsoft.Xna.Framework.Input;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,7 +10,7 @@ namespace Engine.Core.Events
 {
     public class KeyboardEvt : EngineEvt
     {
-        public Keys Key { get; set; }
+        public KeyAction KeyAction { get; set; }
 
         public KeyboardEvt()
         {

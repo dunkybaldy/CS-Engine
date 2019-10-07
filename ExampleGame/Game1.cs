@@ -19,14 +19,11 @@ namespace ExampleGame
 
         public Game1(
             ICameraManager cameraManager,
-            IDeviceManager deviceManager,
             IEntityManager entityManager,
             IEventManager eventManager,
             DiagnosticsController diagnosticsController,
             ILogger<Game1> logger)
-            : base(
-                  cameraManager,
-                  deviceManager, entityManager, eventManager, diagnosticsController, logger)
+            : base(cameraManager, entityManager, eventManager, diagnosticsController, logger)
         {
             //_graphicsDeviceManager.SynchronizeWithVerticalRetrace = false; //Vsync
             //IsFixedTimeStep = true;
@@ -48,9 +45,6 @@ namespace ExampleGame
 
         protected override async Task UpdateAsync(GameTime gameTime)
         {
-            if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
-                Exit();
-
             if (DrawState.Count < 10)
             {
                 UpdateTime += gameTime.ElapsedGameTime.TotalSeconds;

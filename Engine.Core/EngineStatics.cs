@@ -4,10 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Engine.Core.Managers.Interfaces
+namespace Engine.Core
 {
-    public interface IDeviceManager
+    public static class EngineStatics
     {
-        Task PollKeyboard();
+        public static bool Running { get; set; } = true;
     }
 }

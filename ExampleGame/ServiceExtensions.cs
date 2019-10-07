@@ -1,5 +1,6 @@
 ﻿using Engine.Core.Models;
 using Engine.Core.Models.Interfaces;
+using Engine.Core.Models.Options;
 using ExampleGame.Options;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -21,10 +22,12 @@ namespace ExampleGame
         private static IServiceCollection AddGameOptions(this IServiceCollection services)
         {
             var config = new ConfigurationBuilder()
-                .AddJsonFile("UserOptions.json", false, true)
+                .AddJsonFile("DefaultOptions.json", false, true)
                 .Build();
 
             services.AddSingleton(config);
+
+            services.Configure<KeyboardOptions>(config.GetSection("KeyBindings"));
 
             //var activeConfiguration = config.GetSection("User");
             

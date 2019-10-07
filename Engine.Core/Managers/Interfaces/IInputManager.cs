@@ -6,8 +6,8 @@ using System.Threading.Tasks;
 
 namespace Engine.Core.Managers.Interfaces
 {
-    public interface IDeviceManager
+    public interface IInputManager
     {
-        Task PollKeyboard();
+        Task Run();
     }
 }

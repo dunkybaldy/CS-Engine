@@ -2,11 +2,8 @@
 {
     public enum KeyboardActions
     {
-        OPEN_CLOSE_MENU,
-        MOVE_LEFT,
-        MOVE_RIGHT,
-        MOVE_FORWARD,
-        MOVE_UP,
-        MOVE_DOWN
+        ON_PRESS,
+        ON_RELEASE,
+        ON_HOLD
     }
 }

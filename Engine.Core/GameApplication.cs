@@ -17,7 +17,6 @@ namespace Engine.Core
     public class GameApplication : Game
     {
         protected readonly ICameraManager _cameraManager;
-        protected readonly IDeviceManager _deviceManager;
         protected readonly IEntityManager _entityManager;
         protected readonly IEventManager _eventManager;
         protected GraphicsDeviceManager _graphicsDeviceManager;
@@ -31,7 +30,6 @@ namespace Engine.Core
 
         public GameApplication(
             ICameraManager cameraManager,
-            IDeviceManager deviceManager,
             IEntityManager entityManager,
             IEventManager eventManager,
             DiagnosticsController diagnosticsController,
@@ -40,7 +38,6 @@ namespace Engine.Core
             Content.RootDirectory = "Content";
 
             _cameraManager = cameraManager ?? throw new ArgumentNullException(nameof(cameraManager));
-            _deviceManager = deviceManager ?? throw new ArgumentNullException(nameof(deviceManager));
             _entityManager = entityManager ?? throw new ArgumentNullException(nameof(entityManager));
             _eventManager = eventManager ?? throw new ArgumentNullException(nameof(eventManager));
             _diagnosticsController = diagnosticsController ?? throw new ArgumentNullException(nameof(diagnosticsController));
@@ -105,7 +102,6 @@ namespace Engine.Core
         {
             try
             {
-                //await _deviceManager.PollState();
                 var entitiesToEnqueue = await _entityManager.UpdateEntities(gameTime);
 
                 // Not equal to update because we only want to draw entities which can be drawn

@@ -1,7 +1,7 @@
 ﻿using Engine.Core.Events;
 using Engine.Core.Managers.Interfaces;
 using Engine.Core.Models.Options;
-
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.Xna.Framework.Input;
 
@@ -17,8 +17,7 @@ namespace Engine.Core.Managers
     {
         private readonly IEventManager _eventManager;
         private readonly KeyboardOptions _keyboardOptions;
-
-        public List<Keys> BoundKeys { get; set; }
+        private readonly ILogger<DeviceManager> _logger;
 
         private KeyboardState KeyboardState { get; set; }
         private MouseState MouseState { get; set; }
@@ -27,21 +26,30 @@ namespace Engine.Core.Managers
         private MouseState PreviousMouseState { get; set; }
 
 
-        public DeviceManager(IEventManager eventManager, IOptions<KeyboardOptions> keyboardOptions)
+        public DeviceManager(IEventManager eventManager, IOptions<KeyboardOptions> keyboardOptions, ILogger<DeviceManager> logger)
         {
             _eventManager = eventManager ?? throw new ArgumentNullException(nameof(eventManager));
             _keyboardOptions = keyboardOptions.Value ?? throw new ArgumentNullException(nameof(keyboardOptions));
-            BoundKeys = new List<Keys>();
+            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
-        public async Task PollState()
+        public async Task PollKeyboard()
         {
             KeyboardState = Keyboard.GetState();
 
             var keysDown = KeyboardState.GetPressedKeys().ToList();
-            var keysICareAbout = keysDown.Where(x => _keyboardOptions.BoundKeyActions.Keys.Contains(x.ToString()));
+            foreach (var key in keysDown)
+            {
+                _logger.LogInformation($"{key.ToString()}");
+            }
 
-            if (keysICareAbout.Count() != 0)
+            //var keysICareAbout = keysDown.Where(x => _keyboardOptions.BoundKeyActions.Keys.Contains(x.ToString()));
+            var keysICareAbout = new List<KeyAction>();
+
+            foreach (var key in keysDown)
+                keysICareAbout.Add(_keyboardOptions.KeyActions.First(x => x.KeyName == key));
+
+            if (keysICareAbout.Any())
             {
                 var eventTasks = CreateKeyboardTasks(keysICareAbout);
 
@@ -50,16 +58,18 @@ namespace Engine.Core.Managers
             PreviousKeyboardState = KeyboardState;
         }
 
-        private List<Task> CreateKeyboardTasks(IEnumerable<Keys> keys)
+        private List<Task> CreateKeyboardTasks(IEnumerable<KeyAction> keyActions)
         { 
             var tasks = new List<Task>();
 
-            foreach (var key in keys)
+            foreach (var keyAction in keyActions)
             {
-                tasks.Add(_eventManager.PublishEvent(new KeyboardEvt
-                {
-                    Key = key
-                }));
+                tasks.Add(_eventManager.PublishEvent(
+                    new KeyboardEvt
+                    {
+                        KeyAction = keyAction
+                    }
+                ));
             }
 
             return tasks;
