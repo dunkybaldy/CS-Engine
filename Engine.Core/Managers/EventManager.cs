@@ -62,7 +62,20 @@ namespace Engine.Core.Managers
 
         public Task SubscribeToEvent(EventType eventType, IEventSubscriber subscriber)
         {
+            if (!Subscribers.ContainsKey(eventType))
+                Subscribers.TryAdd(eventType, new ConcurrentBag<IEventSubscriber>());
             Subscribers[eventType].Add(subscriber);
+            return Task.CompletedTask;
+        }
+
+        public Task SubscribeToEvents(IEnumerable<EventType> eventTypes, IEventSubscriber subscriber)
+        {
+            foreach (var evt in eventTypes)
+            {
+                if (!Subscribers.ContainsKey(evt))
+                    Subscribers.TryAdd(evt, new ConcurrentBag<IEventSubscriber>());
+                Subscribers[evt].Add(subscriber);
+            }
             return Task.CompletedTask;
         }
 

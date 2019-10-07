@@ -35,6 +35,7 @@ namespace ExampleGame
             await base.InitialiseAsync();
 
             var blob = await _entityManager.Create<Robot>("Robot|1");
+            await _eventManager.SubscribeToEvents(blob.SubscribedToEvents, blob);
             _cameraManager.GetMainCamera().CameraTarget = blob.GetPosition();
         }
 

@@ -1,9 +1,10 @@
 ### Monogame Engine Changelog
 
 ##### 08/10/2019 - dunkybaldy
+* Player class successfully consumes event type of keyboard
 * Solved problems:
 	* On pressing unbound key, threw exception causing thread to fault
-	* null checks
+	* Fix was null checks
 
 ##### 07/10/2019 - dunkybaldy
 * Add input manager which uses device manager to poll for input events and send to event manager
