@@ -1,5 +1,6 @@
 ﻿using Engine.Core.Events;
 using Engine.Core.Managers.Interfaces;
+using Engine.Core.Models.Enums;
 using Engine.Core.Models.Options;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -38,16 +39,15 @@ namespace Engine.Core.Managers
             KeyboardState = Keyboard.GetState();
 
             var keysDown = KeyboardState.GetPressedKeys().ToList();
-            foreach (var key in keysDown)
-            {
-                _logger.LogInformation($"{key.ToString()}");
-            }
 
-            //var keysICareAbout = keysDown.Where(x => _keyboardOptions.BoundKeyActions.Keys.Contains(x.ToString()));
+            //var keysICareAbout = keysDown.Where(x => x == _keyboardOptions.KeyActions.First(y => y.KeyName == x));
             var keysICareAbout = new List<KeyAction>();
 
             foreach (var key in keysDown)
-                keysICareAbout.Add(_keyboardOptions.KeyActions.First(x => x.KeyName == key));
+            {
+                if (_keyboardOptions.KeyActions.Any(x => x.KeyName == key))
+                    keysICareAbout.Add(_keyboardOptions.KeyActions.First(x => x.KeyName == key));
+            }
 
             if (keysICareAbout.Any())
             {
@@ -55,21 +55,57 @@ namespace Engine.Core.Managers
 
                 await Task.WhenAll(eventTasks);
             }
+
             PreviousKeyboardState = KeyboardState;
         }
 
         private List<Task> CreateKeyboardTasks(IEnumerable<KeyAction> keyActions)
-        { 
+        {
             var tasks = new List<Task>();
 
             foreach (var keyAction in keyActions)
             {
-                tasks.Add(_eventManager.PublishEvent(
-                    new KeyboardEvt
-                    {
-                        KeyAction = keyAction
-                    }
-                ));
+                switch (keyAction.KeyboardAction)
+                {
+                    case KeyboardActions.ON_PRESS:
+                        if (!PreviousKeyboardState.IsKeyDown(keyAction.KeyName))
+                        {
+                            _logger.LogInformation($"{keyAction.KeyName}");
+                            tasks.Add(_eventManager.PublishEvent(
+                                new KeyboardEvt
+                                {
+                                    KeyAction = keyAction
+                                }
+                            ));
+                        }
+                        break;
+                    //case KeyboardActions.ON_RELEASE:
+                    //    if (PreviousKeyboardState.IsKeyDown(keyAction.KeyName) && )
+                    //    {
+                    //        tasks.Add(_eventManager.PublishEvent(
+                    //            new KeyboardEvt
+                    //            {
+                    //                KeyAction = keyAction
+                    //            }
+                    //        ));
+                    //    }
+                    //  break;
+                    case KeyboardActions.ON_HOLD:
+                        if (PreviousKeyboardState.IsKeyDown(keyAction.KeyName))
+                        {
+                            _logger.LogInformation($"{keyAction.KeyName}");
+                            tasks.Add(_eventManager.PublishEvent(
+                                new KeyboardEvt
+                                {
+                                    KeyAction = keyAction
+                                }
+                            ));
+                        }
+                        break;
+                    default:
+                        _logger.LogWarning("Action not supported: {KeyboardAction}", keyAction.KeyboardAction);
+                        break;
+                }
             }
 
             return tasks;

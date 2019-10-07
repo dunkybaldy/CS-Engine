@@ -52,7 +52,7 @@ namespace Engine.Core.Managers
 
             if (EventQueue.TryDequeue(out EngineEvt engineEvt))
             {
-                _logger.LogInformation("Found event '{EventType}'. Adding publish task for subscribers.", engineEvt.EventType);
+                _logger.LogDebug("Found event '{EventType}'. Adding publish task for subscribers.", engineEvt.EventType);
                 if (Subscribers.ContainsKey(engineEvt.EventType))
                     Subscribers[engineEvt.EventType].ToList().ForEach(x => tasks.Add(x.HandleEvent(engineEvt)));
             }
