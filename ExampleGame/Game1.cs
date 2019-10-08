@@ -17,6 +17,10 @@ namespace ExampleGame
     {
         private double UpdateTime { get; set; }
 
+        BasicEffect effect;
+        Texture2D checkerboardTexture;
+        VertexPositionNormalTexture[] floorVerts;
+
         public Game1(
             ICameraManager cameraManager,
             IEntityManager entityManager,
@@ -37,6 +41,32 @@ namespace ExampleGame
             var blob = await _entityManager.Create<Robot>("Robot|1");
             await _eventManager.SubscribeToEvents(blob.SubscribedToEvents, blob);
             _cameraManager.GetMainCamera().CameraTarget = blob.GetPosition();
+
+            floorVerts = new VertexPositionNormalTexture[6];
+
+            floorVerts[0].Position = new Vector3(-20, -20, 0);
+            floorVerts[1].Position = new Vector3(-20, 20, 0);
+            floorVerts[2].Position = new Vector3(20, -20, 0);
+
+            floorVerts[3].Position = floorVerts[1].Position;
+            floorVerts[4].Position = new Vector3(20, 20, 0);
+            floorVerts[5].Position = floorVerts[2].Position;
+
+            int repetitions = 20;
+
+            floorVerts[0].TextureCoordinate = new Vector2(0, 0);
+            floorVerts[1].TextureCoordinate = new Vector2(0, repetitions);
+            floorVerts[2].TextureCoordinate = new Vector2(repetitions, 0);
+
+            floorVerts[3].TextureCoordinate = floorVerts[1].TextureCoordinate;
+            floorVerts[4].TextureCoordinate = new Vector2(repetitions, repetitions);
+            floorVerts[5].TextureCoordinate = floorVerts[2].TextureCoordinate;
+
+            using (var stream = TitleContainer.OpenStream("Content/checkerboard.png"))
+            {
+                checkerboardTexture = Texture2D.FromStream(GraphicsDevice, stream);
+            }
+
         }
 
         protected override async Task UnloadContentAsync()
@@ -68,8 +98,29 @@ namespace ExampleGame
             {
                 CullMode = CullMode.None
             };
-
+            //DrawGround();
             await base.DrawAsync(gameTime);
+        }
+
+        private void DrawGround()
+        {
+            var mainCm = _cameraManager.GetMainCamera();
+
+            effect.View = mainCm.ViewMatrix;
+            effect.Projection = mainCm.ProjectionMatrix;
+            effect.TextureEnabled = true;
+            effect.Texture = checkerboardTexture;
+
+            foreach (var pass in effect.CurrentTechnique.Passes)
+            {
+                pass.Apply();
+
+                GraphicsDevice.DrawUserPrimitives(
+                            PrimitiveType.TriangleList,
+                    floorVerts,
+                    0,
+                    2);
+            }
         }
     }
 }

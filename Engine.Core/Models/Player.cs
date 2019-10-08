@@ -23,25 +23,10 @@ namespace Engine.Core.Models
             };
         }
 
-        protected virtual Task HandleCollisionEvent(KeyboardEvt @event)
-        {
-            throw new NotImplementedException();
-        }
-
-        protected virtual Task HandleControllerEvent(KeyboardEvt @event)
-        {
-            throw new NotImplementedException();
-        }
-
-        protected virtual Task HandleKeyboardEvent(KeyboardEvt @event)
-        {
-            throw new NotImplementedException();
-        }
-
-        protected virtual Task HandleMouseEvent(KeyboardEvt @event)
-        {
-            throw new NotImplementedException();
-        }
+        protected abstract Task HandleCollisionEvent(KeyboardEvt @event);
+        protected abstract Task HandleControllerEvent(KeyboardEvt @event);
+        protected abstract Task HandleKeyboardEvent(KeyboardEvt @event);
+        protected abstract Task HandleMouseEvent(KeyboardEvt @event);
 
         public virtual async Task HandleEvent(EngineEvt @event)
         {

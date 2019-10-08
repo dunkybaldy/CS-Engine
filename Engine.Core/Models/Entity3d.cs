@@ -19,7 +19,7 @@ namespace Engine.Core.Models
         public string TextureName { get; protected set; }
         protected Transform Transform { get; set; }
         protected float RotationSpeed { get; set; }
-        protected Vector3 TranslationSpeed { get; set; }
+        protected Vector3 TranslationSpeed;
         public EntityActions ActionOnEntity { get; protected set; } = EntityActions.UPDATEDRAW;
         public List<EventType> SubscribedToEvents { get; protected set; }
         public EntityType EntityType = EntityType._3D;
