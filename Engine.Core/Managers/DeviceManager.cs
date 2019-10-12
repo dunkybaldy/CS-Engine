@@ -41,12 +41,12 @@ namespace Engine.Core.Managers
             var keysDown = KeyboardState.GetPressedKeys().ToList();
 
             //var keysICareAbout = keysDown.Where(x => x == _keyboardOptions.KeyActions.First(y => y.KeyName == x));
-            var keysICareAbout = new List<KeyAction>();
+            var keysICareAbout = new List<KeyBinding>();
 
             foreach (var key in keysDown)
             {
-                if (_keyboardOptions.KeyActions.Any(x => x.KeyName == key))
-                    keysICareAbout.Add(_keyboardOptions.KeyActions.First(x => x.KeyName == key));
+                if (_keyboardOptions.KeyBindings.Any(x => x.KeyName == key))
+                    keysICareAbout.AddRange(_keyboardOptions.KeyBindings.Where(x => x.KeyName == key));
             }
 
             if (keysICareAbout.Any())
@@ -59,51 +59,51 @@ namespace Engine.Core.Managers
             PreviousKeyboardState = KeyboardState;
         }
 
-        private List<Task> CreateKeyboardTasks(IEnumerable<KeyAction> keyActions)
+        private List<Task> CreateKeyboardTasks(IEnumerable<KeyBinding> keyBindings)
         {
             var tasks = new List<Task>();
 
-            foreach (var keyAction in keyActions)
+            foreach (var keyBinding in keyBindings)
             {
-                switch (keyAction.KeyboardAction)
+                switch (keyBinding.KeyboardAction)
                 {
-                    case KeyboardActions.ON_PRESS:
-                        if (!PreviousKeyboardState.IsKeyDown(keyAction.KeyName))
+                    case KeyboardActions.KEY_PRESS:
+                        if (!PreviousKeyboardState.IsKeyDown(keyBinding.KeyName))
                         {
-                            _logger.LogInformation($"{keyAction.KeyName}");
+                            _logger.LogInformation($"{keyBinding.KeyName}");
                             tasks.Add(_eventManager.PublishEvent(
-                                new KeyboardEvt
+                                new KeyPressEvt
                                 {
-                                    KeyAction = keyAction
+                                    KeyBinding = keyBinding
                                 }
                             ));
                         }
                         break;
-                    //case KeyboardActions.ON_RELEASE:
-                    //    if (PreviousKeyboardState.IsKeyDown(keyAction.KeyName) && )
-                    //    {
-                    //        tasks.Add(_eventManager.PublishEvent(
-                    //            new KeyboardEvt
-                    //            {
-                    //                KeyAction = keyAction
-                    //            }
-                    //        ));
-                    //    }
-                    //  break;
-                    case KeyboardActions.ON_HOLD:
-                        if (PreviousKeyboardState.IsKeyDown(keyAction.KeyName))
+                    case KeyboardActions.KEY_RELEASE:
+                        if (PreviousKeyboardState.IsKeyDown(keyBinding.KeyName) && KeyboardState.IsKeyUp(keyBinding.KeyName))
                         {
-                            _logger.LogInformation($"{keyAction.KeyName}");
                             tasks.Add(_eventManager.PublishEvent(
-                                new KeyboardEvt
+                                new KeyReleasedEvt
                                 {
-                                    KeyAction = keyAction
+                                    KeyBinding = keyBinding
+                                }
+                            ));
+                        }
+                        break;
+                    case KeyboardActions.KEY_HOLD:
+                        if (PreviousKeyboardState.IsKeyDown(keyBinding.KeyName))
+                        {
+                            _logger.LogInformation($"{keyBinding.KeyName}");
+                            tasks.Add(_eventManager.PublishEvent(
+                                new KeyPressEvt
+                                {
+                                    KeyBinding = keyBinding
                                 }
                             ));
                         }
                         break;
                     default:
-                        _logger.LogWarning("Action not supported: {KeyboardAction}", keyAction.KeyboardAction);
+                        _logger.LogWarning("Action not supported: {KeyboardAction}", keyBinding.KeyboardAction);
                         break;
                 }
             }

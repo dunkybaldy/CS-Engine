@@ -1,10 +1,6 @@
 ﻿using Engine.Core.Events;
-using Engine.Core.Managers.Interfaces;
-using Microsoft.Extensions.Logging;
-using System;
+using Engine.Core.Models.Enums;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Engine.Core.Models
@@ -13,37 +9,40 @@ namespace Engine.Core.Models
     {
         protected Player()
         {
+            ActionOnEntity = EntityActions.UPDATEDRAW;
+
             // Probably should be determined by game, if game doesn't provide then use defaults
-            SubscribedToEvents = new List<EventType>
+            SubscribedToEvents = new List<EventCategory>
             {
-                EventType.COLLISION,
-                EventType.CONTROLLER,
-                EventType.KEYBOARD,
-                EventType.MOUSE
+                EventCategory.KEYBOARD,
+                EventCategory.MOUSE
             };
         }
 
-        protected abstract Task HandleCollisionEvent(KeyboardEvt @event);
-        protected abstract Task HandleControllerEvent(KeyboardEvt @event);
-        protected abstract Task HandleKeyboardEvent(KeyboardEvt @event);
-        protected abstract Task HandleMouseEvent(KeyboardEvt @event);
+        //protected abstract Task HandleCollisionEvent(EngineEvt @event);
+        //protected abstract Task HandleControllerEvent(EngineEvt @event);
+        protected abstract Task HandleKeyboardEvent(KeyEvt @event);
+        //protected abstract Task HandleMouseEvent(EngineEvt @event);
 
         public virtual async Task HandleEvent(EngineEvt @event)
         {
-            switch(@event.EventType)
+            switch(@event.EventCategory)
             {
-                case EventType.COLLISION:
+                //case EventType.COLLISION:
                     //await HandleCollisionEvent((CollisionEvt)@event);
-                    break;
-                case EventType.CONTROLLER:
+                    //break;
+                //case EventType.CONTROLLER:
                     //await HandleCollisionEvent((CollisionEvt)@event);
+                    //break;
+                case EventCategory.KEYBOARD:
+                    if (@event.EventType == EventType.KEY_PRESSED)
+                        await HandleKeyboardEvent((KeyPressEvt)@event);
+                    else if (@event.EventType == EventType.KEY_RELEASED)
+                        await HandleKeyboardEvent((KeyReleasedEvt)@event);
                     break;
-                case EventType.KEYBOARD:
-                    await HandleKeyboardEvent((KeyboardEvt)@event);
-                    break;
-                case EventType.MOUSE:
-                    //await HandleCollisionEvent((CollisionEvt)@event);
-                    break;
+                //case EventCategory.MOUSE:
+                //    await HandleMouseEvent((MouseEvt)@event);
+                //    break;
                 default:
                 break;
             }

@@ -14,14 +14,14 @@ namespace Engine.Core.Models
     public abstract class Entity3D : IEntity3D
     {
         protected Texture2D Texture { get; set; }
-        protected Model Model { get; set; }
-        public string ModelName { get; protected set; }
         public string TextureName { get; protected set; }
         protected Transform Transform { get; set; }
         protected float RotationSpeed { get; set; }
         protected Vector3 TranslationSpeed;
-        public EntityActions ActionOnEntity { get; protected set; } = EntityActions.UPDATEDRAW;
-        public List<EventType> SubscribedToEvents { get; protected set; }
+        public EntityActions ActionOnEntity { get; protected set; } = EntityActions.NONE;
+        protected Model Model { get; set; }
+        public string ModelName { get; protected set; }
+        public List<EventCategory> SubscribedToEvents { get; protected set; }
         public EntityType EntityType = EntityType._3D;
 
         protected Entity3D()

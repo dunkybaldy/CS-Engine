@@ -1,5 +1,5 @@
 ﻿using Engine.Core.Managers.Interfaces;
-
+using Engine.Core.Validation;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Xna.Framework;
@@ -25,6 +25,17 @@ namespace Engine.Core
             {
                 var services = new ServiceCollection().Initialise(gameServices);
                 var serviceProvider = BuildServices<T>(services);
+
+                var logger = serviceProvider.GetRequiredService<ILogger<EngineInitialiser>>();
+
+                var validators = serviceProvider.GetServices<IValidator>();
+
+                foreach (var validator in validators)
+                {
+                    var vr = validator.Validate().GetAwaiter().GetResult();
+                    if (!vr.Validated)
+                        logger.LogError(vr.ErrorMessage);
+                }
 
                 Task.Factory.StartNew(RunInputSystem(serviceProvider));
                 // Add per thread methods here

@@ -11,8 +11,8 @@ namespace Engine.Core.Managers.Interfaces
     {
         void Run();
         Task PublishEvent<T>(T @event) where T : EngineEvt;
-        Task SubscribeToEvent(EventType eventType, IEventSubscriber subscriber);
-        Task SubscribeToEvents(IEnumerable<EventType> eventTypes, IEventSubscriber subscriber);
-        Task UnsubscribeFromEvent(EventType eventType, IEventSubscriber subscriber);
+        Task SubscribeToEvent(EventCategory eventCategory, IEventSubscriber subscriber);
+        Task SubscribeToEvents(IEnumerable<EventCategory> eventCategorys, IEventSubscriber subscriber);
+        Task UnsubscribeFromEvent(EventCategory eventCategory, IEventSubscriber subscriber);
     }
 }

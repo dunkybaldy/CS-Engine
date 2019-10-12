@@ -2,8 +2,8 @@
 {
     public enum KeyboardActions
     {
-        ON_PRESS,
-        ON_RELEASE,
-        ON_HOLD
+        KEY_PRESS,
+        KEY_RELEASE,
+        KEY_HOLD
     }
 }

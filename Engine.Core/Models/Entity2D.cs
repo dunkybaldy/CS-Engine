@@ -4,13 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Engine.Core.Models.Enums
+namespace Engine.Core.Models
 {
-    public enum EntityActions
+    public class Entity2D
     {
-        NONE = 0,
-        UPDATE,
-        DRAW,
-        UPDATEDRAW
     }
 }

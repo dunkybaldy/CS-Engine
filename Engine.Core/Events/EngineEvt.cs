@@ -8,6 +8,8 @@ namespace Engine.Core.Events
 {
     public abstract class EngineEvt : EventArgs
     {
+        public EventCategory EventCategory { get; set; }
         public EventType EventType { get; set; }
+        public bool Handled { get; set; }
     }
 }

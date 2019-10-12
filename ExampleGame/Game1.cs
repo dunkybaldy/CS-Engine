@@ -1,5 +1,6 @@
 ﻿using Engine.Core;
 using Engine.Core.Diagnostics;
+using Engine.Core.Events;
 using Engine.Core.Managers.Interfaces;
 
 using ExampleGame.Entities;
@@ -9,11 +10,12 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace ExampleGame
 {
-    public class Game1 : GameApplication
+    public class Game1 : GameApplication, IEventSubscriber
     {
         private double UpdateTime { get; set; }
 
@@ -32,15 +34,21 @@ namespace ExampleGame
             //_graphicsDeviceManager.SynchronizeWithVerticalRetrace = false; //Vsync
             //IsFixedTimeStep = true;
             //TargetElapsedTime = TimeSpan.FromMilliseconds(1000.0f / 1000);
+
+            eventManager.SubscribeToEvents(
+                new List<EventCategory> { EventCategory.KEYBOARD }, 
+                this);
         }
 
         protected override async Task InitialiseAsync()
         {
             await base.InitialiseAsync();
 
-            var blob = await _entityManager.Create<Robot>("Robot|1");
-            await _eventManager.SubscribeToEvents(blob.SubscribedToEvents, blob);
-            _cameraManager.GetMainCamera().CameraTarget = blob.GetPosition();
+            var robot = await _entityManager.Create<Robot>("Robot|1");
+            await _eventManager.SubscribeToEvents(robot.SubscribedToEvents, robot);
+            _cameraManager.GetMainCamera().CameraTarget = robot.GetPosition();
+
+            var ground = await _entityManager.Create<Ground>("Ground");
 
             floorVerts = new VertexPositionNormalTexture[6];
 
@@ -62,11 +70,10 @@ namespace ExampleGame
             floorVerts[4].TextureCoordinate = new Vector2(repetitions, repetitions);
             floorVerts[5].TextureCoordinate = floorVerts[2].TextureCoordinate;
 
-            using (var stream = TitleContainer.OpenStream("Content/checkerboard.png"))
-            {
-                checkerboardTexture = Texture2D.FromStream(GraphicsDevice, stream);
-            }
-
+            //using (var stream = TitleContainer.OpenStream("Content/checkerboard.png"))
+            //{
+            //    checkerboardTexture = Texture2D.FromStream(GraphicsDevice, stream);
+            //}
         }
 
         protected override async Task UnloadContentAsync()
@@ -121,6 +128,38 @@ namespace ExampleGame
                     0,
                     2);
             }
+        }
+
+        public Task HandleEvent(EngineEvt @event)
+        {
+            // Only handles key board for now
+            if (@event.EventType == EventType.KEY_PRESSED)
+            {
+                var realEvent = (KeyPressEvt)@event;
+                if (realEvent.KeyBinding.KeyName == Keys.Escape)
+                    Exit(); // actually want to open menu, so perhaps a scene manager or game manager should listen for this key event
+            }
+
+            return Task.CompletedTask;
+        }
+
+        protected override void OnActivated(object sender, EventArgs args)
+        {
+            Window.Title = GameTitle;
+            base.OnActivated(sender, args);
+        }
+
+        protected override void OnDeactivated(object sender, EventArgs args)
+        {
+            Window.Title = $"{GameTitle} | Deactive";
+            // Open Menu pause
+            base.OnDeactivated(sender, args);
+        }
+
+        protected override void OnExiting(object sender, EventArgs args)
+        {
+            // quicksave or something
+            base.OnExiting(sender, args);
         }
     }
 }

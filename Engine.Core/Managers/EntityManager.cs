@@ -54,7 +54,10 @@ namespace Engine.Core.Managers
             if (entity is IEntity3D)
             {
                 var entity3d = entity as IEntity3D;
-                entity3d.ApplyGraphics(_assetManager.GetModel(entity3d.GetModelName()), _assetManager.GetTexture2D(entity3d.GetTextureName()));
+                entity3d.ApplyGraphics(
+                    _assetManager.GetModel(entity3d.GetModelName()), 
+                    _assetManager.GetTexture2D(entity3d.GetTextureName())
+                    );
             }
 
             Entities.TryAdd(id, entity);

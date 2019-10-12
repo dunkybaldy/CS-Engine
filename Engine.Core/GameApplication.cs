@@ -136,25 +136,6 @@ namespace Engine.Core
             }
         }
 
-        protected override void OnActivated(object sender, EventArgs args)
-        {
-            Window.Title = GameTitle;
-            base.OnActivated(sender, args);
-        }
-
-        protected override void OnDeactivated(object sender, EventArgs args)
-        {
-            Window.Title = $"{GameTitle} | Deactive";
-            // Open Menu pause
-            base.OnDeactivated(sender, args);
-        }
-
-        protected override void OnExiting(object sender, EventArgs args)
-        {
-            // quicksave or something
-            base.OnExiting(sender, args);
-        }
-
         #region Game Implementation
         protected override async void Initialize()
         {

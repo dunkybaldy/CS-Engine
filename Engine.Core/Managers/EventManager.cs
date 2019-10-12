@@ -20,7 +20,7 @@ namespace Engine.Core.Managers
 
         public ConcurrentQueue<EngineEvt> EventQueue { get; private set; }
 
-        public ConcurrentDictionary<EventType, ConcurrentBag<IEventSubscriber>> Subscribers { get; set; }
+        public ConcurrentDictionary<EventCategory, ConcurrentBag<IEventSubscriber>> Subscribers { get; set; }
 
         public EventManager(ILogger<EventManager> logger, DiagnosticsController diagnosticsController)
         {
@@ -28,7 +28,7 @@ namespace Engine.Core.Managers
             _diagnosticsController = diagnosticsController ?? throw new ArgumentNullException(nameof(diagnosticsController));
 
             EventQueue = new ConcurrentQueue<EngineEvt>();
-            Subscribers = new ConcurrentDictionary<EventType, ConcurrentBag<IEventSubscriber>>();
+            Subscribers = new ConcurrentDictionary<EventCategory, ConcurrentBag<IEventSubscriber>>();
         }
 
         public async void Run()
@@ -53,35 +53,30 @@ namespace Engine.Core.Managers
             if (EventQueue.TryDequeue(out EngineEvt engineEvt))
             {
                 _logger.LogDebug("Found event '{EventType}'. Adding publish task for subscribers.", engineEvt.EventType);
-                if (Subscribers.ContainsKey(engineEvt.EventType))
-                    Subscribers[engineEvt.EventType].ToList().ForEach(x => tasks.Add(x.HandleEvent(engineEvt)));
+                if (Subscribers.ContainsKey(engineEvt.EventCategory))
+                    Subscribers[engineEvt.EventCategory].ToList().ForEach(x => tasks.Add(x.HandleEvent(engineEvt)));
             }
 
             await _diagnosticsController.DiagnoseTask(Task.WhenAll(tasks), "HandleEvent");
         }
 
-        public Task SubscribeToEvent(EventType eventType, IEventSubscriber subscriber)
+        public Task SubscribeToEvent(EventCategory eventCategory, IEventSubscriber subscriber)
         {
-            if (!Subscribers.ContainsKey(eventType))
-                Subscribers.TryAdd(eventType, new ConcurrentBag<IEventSubscriber>());
-            Subscribers[eventType].Add(subscriber);
+            if (!Subscribers.ContainsKey(eventCategory))
+                Subscribers.TryAdd(eventCategory, new ConcurrentBag<IEventSubscriber>());
+            Subscribers[eventCategory].Add(subscriber);
             return Task.CompletedTask;
         }
 
-        public Task SubscribeToEvents(IEnumerable<EventType> eventTypes, IEventSubscriber subscriber)
+        public async Task SubscribeToEvents(IEnumerable<EventCategory> eventCategorys, IEventSubscriber subscriber)
         {
-            foreach (var evt in eventTypes)
-            {
-                if (!Subscribers.ContainsKey(evt))
-                    Subscribers.TryAdd(evt, new ConcurrentBag<IEventSubscriber>());
-                Subscribers[evt].Add(subscriber);
-            }
-            return Task.CompletedTask;
+            foreach (var evt in eventCategorys)            
+                await SubscribeToEvent(evt, subscriber);
         }
 
-        public Task UnsubscribeFromEvent(EventType eventType, IEventSubscriber subscriber)
+        public Task UnsubscribeFromEvent(EventCategory eventCategory, IEventSubscriber subscriber)
         {
-            Subscribers[eventType] = new ConcurrentBag<IEventSubscriber>(Subscribers[eventType].Except(new[] { subscriber }));
+            Subscribers[eventCategory] = new ConcurrentBag<IEventSubscriber>(Subscribers[eventCategory].Except(new[] { subscriber }));
             return Task.CompletedTask;
         }
     }

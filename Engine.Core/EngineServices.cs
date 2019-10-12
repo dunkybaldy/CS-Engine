@@ -3,7 +3,7 @@ using Engine.Core.Factories;
 using Engine.Core.Factories.Interfaces;
 using Engine.Core.Managers;
 using Engine.Core.Managers.Interfaces;
-
+using Engine.Core.Validation;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Xna.Framework.Content;
@@ -28,6 +28,7 @@ namespace Engine.Core
 #if DEBUG
                 .AddEngineLogging()
 #endif
+                .AddEngineValidation()
                 .AddEngineDiagnostics();
             return services;
         }
@@ -45,6 +46,12 @@ namespace Engine.Core
                 loggingBuilder.AddConsole();
             });
 
+            return services;
+        }
+
+        public static IServiceCollection AddEngineValidation(this IServiceCollection services)
+        {
+            services.AddSingleton<IValidator, KeyBindingValidator>();
             return services;
         }
 

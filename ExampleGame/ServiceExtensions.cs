@@ -27,7 +27,7 @@ namespace ExampleGame
 
             services.AddSingleton(config);
 
-            services.Configure<KeyboardOptions>(config.GetSection("KeyBindings"));
+            services.Configure<KeyboardOptions>(config.GetSection("KeyOptions"));
 
             //var activeConfiguration = config.GetSection("User");
             

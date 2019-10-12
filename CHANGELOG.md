@@ -1,5 +1,15 @@
 ### Monogame Engine Changelog
 
+##### 13/10/2019 - dunkybaldy
+* Sorted out event system with a bit of maintenance and slight improvements
+	* Better definitions of events (more specific)
+	* New EventCategory class for quick subscriptions (broad terms eg: Keyboard)
+	* Event type should be checked in handleevent implementation
+	* Added validation for key bindings from settings json file
+	* Begin implementing flooring
+		* Requires 2d modelling
+	* Fix debug issue with symbols not loading in ExampleGame (uncheck 'Optimize Code')
+
 ##### 08/10/2019 - dunkybaldy
 * Player class successfully consumes event type of keyboard
 * Solved problems:
