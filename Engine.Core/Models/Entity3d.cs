@@ -1,7 +1,6 @@
 ﻿using Engine.Core.Events;
 using Engine.Core.Models.Enums;
 using Engine.Core.Models.Interfaces;
-using Microsoft.Extensions.Logging;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Graphics;

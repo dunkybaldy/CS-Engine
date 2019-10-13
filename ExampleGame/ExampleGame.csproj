@@ -172,7 +172,6 @@
     <Compile Include="TestService.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="App.config" />
     <None Include="DefaultOptions.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
