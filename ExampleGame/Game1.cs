@@ -136,7 +136,7 @@ namespace ExampleGame
             if (@event.EventType == EventType.KEY_PRESSED)
             {
                 var realEvent = (KeyPressEvt)@event;
-                if (realEvent.KeyBinding.KeyName == Keys.Escape)
+                if (realEvent.KeyBinding.Key == Keys.Escape)
                     Exit(); // actually want to open menu, so perhaps a scene manager or game manager should listen for this key event
             }
 

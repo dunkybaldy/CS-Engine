@@ -28,13 +28,13 @@ namespace ExampleGame.Entities
         {
             if (_canJump && !_jumping)
             {
-                TranslationSpeed.Z += 5;
+                TranslationSpeed.Z += 50;
                 _canJump = false;
                 _jumping = true;
             }
 
             if (Transform.Position3d.Z > 0)
-                TranslationSpeed.Z -= 0.1f;
+                TranslationSpeed.Z -= 5f;
             else if (Transform.Position3d.Z < 0)
             {
                 TranslationSpeed.Z = 0;
@@ -64,7 +64,7 @@ namespace ExampleGame.Entities
 
         protected override Task HandleKeyboardEvent(KeyEvt @event)
         {
-            if (@event.KeyBinding.KeyName == Microsoft.Xna.Framework.Input.Keys.Space)
+            if (@event.KeyBinding.Key == Microsoft.Xna.Framework.Input.Keys.Space)
                 _canJump = true;
 
             return Task.CompletedTask;

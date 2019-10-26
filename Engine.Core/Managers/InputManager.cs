@@ -28,7 +28,6 @@ namespace Engine.Core.Managers
                 while (EngineStatics.Running)
                 {
                     await _deviceManager.PollKeyboard();
-                    //await _deviceManager.PollMouse();
                 }
 
                 _logger.LogInformation("Finished inputmanager run");

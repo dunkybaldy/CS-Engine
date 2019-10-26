@@ -5,7 +5,7 @@ namespace Engine.Core.Models.Options
 {
     public class KeyBinding
     {
-        public Keys KeyName { get; set; }
-        public KeyboardActions KeyboardAction { get; set; }
+        public Keys Key { get; set; }
+        public KeyBindingActions KeyBindingAction { get; set; }
     }
 }

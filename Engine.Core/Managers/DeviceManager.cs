@@ -34,81 +34,87 @@ namespace Engine.Core.Managers
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
+        // https://stackoverflow.com/questions/13208320/keyboard-button-event-efficiency-in-xna
         public async Task PollKeyboard()
         {
-            KeyboardState = Keyboard.GetState();
-
-            var keysDown = KeyboardState.GetPressedKeys().ToList();
-
-            //var keysICareAbout = keysDown.Where(x => x == _keyboardOptions.KeyActions.First(y => y.KeyName == x));
-            var keysICareAbout = new List<KeyBinding>();
-
-            foreach (var key in keysDown)
+            var error = false;
+            try
             {
-                if (_keyboardOptions.KeyBindings.Any(x => x.KeyName == key))
-                    keysICareAbout.AddRange(_keyboardOptions.KeyBindings.Where(x => x.KeyName == key));
+                KeyboardState = Keyboard.GetState();
+                var keysPressed = KeyboardState.GetPressedKeys().ToList();
+                if (keysPressed.Any())
+                {
+                    var eventTasks = CreateKeyboardTasks(keysPressed);
+                    await Task.WhenAll(eventTasks);
+                }
+                PreviousKeyboardState = KeyboardState;
             }
-
-            if (keysICareAbout.Any())
+            catch (Exception ex)
             {
-                var eventTasks = CreateKeyboardTasks(keysICareAbout);
-
-                await Task.WhenAll(eventTasks);
+                _logger.LogError(ex, "PollKeyboard caught an error. ");
+                error = true;
             }
-
-            PreviousKeyboardState = KeyboardState;
+            finally
+            {
+                //if (error)
+                //    ReconnectDevices();
+            }
         }
 
-        private List<Task> CreateKeyboardTasks(IEnumerable<KeyBinding> keyBindings)
+        private List<Task> CreateKeyboardTasks(List<Keys> keysDown)
         {
             var tasks = new List<Task>();
 
-            foreach (var keyBinding in keyBindings)
+            foreach (var key in keysDown)
             {
-                switch (keyBinding.KeyboardAction)
+                var currentKey = _keyboardOptions.InGameKeyBindings.FirstOrDefault(x => x.Key == key);
+                if (currentKey == null)
                 {
-                    case KeyboardActions.KEY_PRESS:
-                        if (!PreviousKeyboardState.IsKeyDown(keyBinding.KeyName))
+                    _logger.LogWarning($"{key} not bound to an action");
+                    continue;
+                }
+
+                if (!PreviousKeyboardState.IsKeyDown(currentKey.Key) && !KeyboardState.IsKeyUp(currentKey.Key))
+                {
+                    _logger.LogInformation($"{currentKey.Key}");
+                    tasks.Add(_eventManager.PublishEvent(
+                        new KeyPressEvt
                         {
-                            _logger.LogInformation($"{keyBinding.KeyName}");
-                            tasks.Add(_eventManager.PublishEvent(
-                                new KeyPressEvt
-                                {
-                                    KeyBinding = keyBinding
-                                }
-                            ));
+                            KeyBinding = currentKey
                         }
-                        break;
-                    case KeyboardActions.KEY_RELEASE:
-                        if (PreviousKeyboardState.IsKeyDown(keyBinding.KeyName) && KeyboardState.IsKeyUp(keyBinding.KeyName))
+                    ));
+                }
+                else if (PreviousKeyboardState.IsKeyDown(currentKey.Key) && KeyboardState.IsKeyUp(currentKey.Key))
+                {
+                    tasks.Add(_eventManager.PublishEvent(
+                        new KeyReleasedEvt
                         {
-                            tasks.Add(_eventManager.PublishEvent(
-                                new KeyReleasedEvt
-                                {
-                                    KeyBinding = keyBinding
-                                }
-                            ));
+                            KeyBinding = currentKey
                         }
-                        break;
-                    case KeyboardActions.KEY_HOLD:
-                        if (PreviousKeyboardState.IsKeyDown(keyBinding.KeyName))
+                    ));
+                }
+                else if (PreviousKeyboardState.IsKeyDown(currentKey.Key) && KeyboardState.IsKeyDown(currentKey.Key))
+                {
+                    _logger.LogInformation($"{currentKey.Key}");
+                    tasks.Add(_eventManager.PublishEvent(
+                        new KeyPressHeldEvt
                         {
-                            _logger.LogInformation($"{keyBinding.KeyName}");
-                            tasks.Add(_eventManager.PublishEvent(
-                                new KeyPressEvt
-                                {
-                                    KeyBinding = keyBinding
-                                }
-                            ));
+                            KeyBinding = currentKey
                         }
-                        break;
-                    default:
-                        _logger.LogWarning("Action not supported: {KeyboardAction}", keyBinding.KeyboardAction);
-                        break;
+                    ));
+                }
+                else
+                {
+                    _logger.LogWarning("Unhandled Key check..");
                 }
             }
-
             return tasks;
+        }
+
+        public Task PollMouse()
+        {
+            // TODO
+            throw new NotImplementedException();
         }
     }
 }

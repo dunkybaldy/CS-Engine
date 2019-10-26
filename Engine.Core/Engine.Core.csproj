@@ -136,6 +136,7 @@
     <Compile Include="Events\EventCategory.cs" />
     <Compile Include="Events\KeyEvt.cs" />
     <Compile Include="Events\KeyPressEvt.cs" />
+    <Compile Include="Events\KeyPressHeldEvt.cs" />
     <Compile Include="Events\KeyReleasedEvt.cs" />
     <Compile Include="Managers\CameraManager.cs" />
     <Compile Include="Managers\DeviceManager.cs" />
@@ -165,21 +166,23 @@
     <Compile Include="Models\Entity3D.cs" />
     <Compile Include="Models\Enums\EntityActions.cs" />
     <Compile Include="Models\Enums\EntityType.cs" />
+    <Compile Include="Models\Enums\KeyBindingActions.cs" />
     <Compile Include="Models\Interfaces\IEntity.cs" />
     <Compile Include="Models\Interfaces\IEntity3D.cs" />
-    <Compile Include="Models\Enums\KeyboardActions.cs" />
-    <Compile Include="Models\Options\KeyBinding.cs" />
-    <Compile Include="Models\Player.cs" />
-    <Compile Include="Models\Transform.cs" />
     <Compile Include="Models\Options\ControllerOptions.cs" />
+    <Compile Include="Models\Options\KeyBinding.cs" />
     <Compile Include="Models\Options\KeyboardOptions.cs" />
     <Compile Include="Models\Options\MouseOptions.cs" />
+    <Compile Include="Models\Player.cs" />
+    <Compile Include="Models\Transform.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Validation\KeyBindingValidator.cs" />
     <Compile Include="Validation\ValidationResult.cs" />
     <Compile Include="Validation\Validator.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="EngineSettings.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>

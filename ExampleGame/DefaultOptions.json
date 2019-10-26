@@ -8,19 +8,33 @@
   "InGameSettings": {
     "AnInGameSetting": "Yellow"
   },
-  "KeyOptions": {
-    "KeyBindings": [
+  "KeyboardOptions": {
+    "InGameKeyBindings": [
       {
-        "KeyName": "Space",
-        "KeyboardAction": "KEY_PRESS"
+        "Key": "Space",
+        "KeyBindingAction": "Jump"
       },
       {
         "KeyName": "W",
-        "KeyboardAction": "KEY_HOLD"
+        "KeyBindingAction": "MoveForward"
       },
       {
         "KeyName": "Escape",
-        "KeyboardAction": "KEY_PRESS"
+        "KeyBindingAction": "EXIT_GAME"
+      }
+    ],
+    "InMenuKeyBindings": [
+      {
+        "Key": "Enter",
+        "KeyBindingAction": "SELECT"
+      },
+      {
+        "Key": "Up",
+        "KeyBindingAction": "NEXT_OPTION"
+      },
+      {
+        "Key": "Down",
+        "KeyBindingAction": "PREVIOUS_OPTION"
       }
     ]
   }

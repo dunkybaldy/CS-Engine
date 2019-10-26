@@ -9,5 +9,6 @@ namespace Engine.Core.Managers.Interfaces
     public interface IDeviceManager
     {
         Task PollKeyboard();
+        Task PollMouse();
     }
 }

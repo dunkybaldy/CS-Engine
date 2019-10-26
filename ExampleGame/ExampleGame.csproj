@@ -170,6 +170,7 @@
     <Compile Include="ServiceExtensions.cs" />
     <Compile Include="Settings.cs" />
     <Compile Include="TestService.cs" />
+    <Compile Include="Validation\KeyBindingValidator.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="DefaultOptions.json">

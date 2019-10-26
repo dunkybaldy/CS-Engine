@@ -5,11 +5,12 @@ using System.Text;
 using System.Threading.Tasks;
 using Engine.Core.Models.Enums;
 using Engine.Core.Models.Options;
+using Engine.Core.Validation;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.Xna.Framework.Input;
 
-namespace Engine.Core.Validation
+namespace ExampleGame.Validation
 {
     public class KeyBindingValidator : IValidator
     {
@@ -31,22 +32,22 @@ namespace Engine.Core.Validation
             var nameErrors = new List<string>();
             var actionErrors = new List<string>();
 
-            foreach (var binding in _options.KeyBindings)
+            foreach (var binding in _options.InGameKeyBindings)
             {
-                if (!Enum.IsDefined(typeof(Keys), binding.KeyName))
-                    nameErrors.Add($"'{binding.KeyName}' is not a valid key.");
-                if (!Enum.IsDefined(typeof(KeyboardActions), binding.KeyboardAction))
-                    actionErrors.Add($"'{binding.KeyboardAction}' is not a valid action.");
+                if (!Enum.IsDefined(typeof(Keys), binding.Key))
+                    nameErrors.Add($"'{binding.Key}' is not a valid key.");
+                if (!Enum.IsDefined(typeof(KeyBindingActions), binding.KeyBindingAction))
+                    actionErrors.Add($"'{binding.KeyBindingAction}' is not a valid action.");
             }
 
             var errors = new List<string>(nameErrors);
             errors.AddRange(actionErrors);
 
             if (nameErrors.Any())
-                errors.Add(GetKeysEnumNames());
+                errors.Add(GetEnumNames(typeof(Keys)));
 
             if (actionErrors.Any())
-                errors.Add(GetKeyboardActionsEnumNames());
+                errors.Add(GetEnumNames(typeof(KeyBindingActions)));
 
             if (errors.Any())
             {
@@ -59,24 +60,13 @@ namespace Engine.Core.Validation
             return Task.FromResult(validationResult);
         }
 
-        private string GetKeysEnumNames()
+        private string GetEnumNames(Type enumType)
         {
             var stringBuilder = new StringBuilder();
             stringBuilder.Append("Valid Keys: ");
-            foreach (string value in Enum.GetNames(typeof(Keys)))
+            foreach (string value in Enum.GetNames(enumType))
             {
                 stringBuilder.Append($"{value},\r");
-            }
-            return stringBuilder.ToString();
-        }
-
-        private string GetKeyboardActionsEnumNames()
-        {
-            var stringBuilder = new StringBuilder();
-            stringBuilder.Append("Valid KeyboardActions: ");
-            foreach (string value in Enum.GetNames(typeof(KeyboardActions)))
-            {
-                stringBuilder.Append($"{value}");
             }
             return stringBuilder.ToString();
         }

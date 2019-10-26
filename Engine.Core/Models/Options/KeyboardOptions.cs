@@ -6,6 +6,8 @@ namespace Engine.Core.Models.Options
 {
     public class KeyboardOptions
     {
-        public List<KeyBinding> KeyBindings { get; set; } = new List<KeyBinding>();
+        public List<KeyBinding> InGameKeyBindings { get; set; } = new List<KeyBinding>();
+        public List<KeyBinding> InMenuKeyBindings { get; set; } = new List<KeyBinding>();
+
     }
 }

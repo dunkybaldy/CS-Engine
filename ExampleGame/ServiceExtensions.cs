@@ -1,7 +1,9 @@
 ﻿using Engine.Core.Models;
 using Engine.Core.Models.Interfaces;
 using Engine.Core.Models.Options;
+using Engine.Core.Validation;
 using ExampleGame.Options;
+using ExampleGame.Validation;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -14,8 +16,15 @@ namespace ExampleGame
             // Transient for splitscreen, singleton for 1 entity for all players
             services
                 .AddGameOptions()
+                .AddValidation()
                 .AddSingleton<TestService>();
 
+            return services;
+        }
+
+        public static IServiceCollection AddValidation(this IServiceCollection services)
+        {
+            services.AddSingleton<IValidator, KeyBindingValidator>();
             return services;
         }
 
@@ -27,7 +36,7 @@ namespace ExampleGame
 
             services.AddSingleton(config);
 
-            services.Configure<KeyboardOptions>(config.GetSection("KeyOptions"));
+            services.Configure<KeyboardOptions>(config.GetSection("KeyboardOptions"));
 
             //var activeConfiguration = config.GetSection("User");
             

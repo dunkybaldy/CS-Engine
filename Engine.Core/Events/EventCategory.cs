@@ -4,6 +4,6 @@
     {
         NONE = 0,
         KEYBOARD,
-        MOUSE,
+        MOUSE
     }
 }
