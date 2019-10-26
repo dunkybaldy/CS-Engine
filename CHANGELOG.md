@@ -1,5 +1,9 @@
 ### Monogame Engine Changelog
 
+##### 26/10/2019 - dunkybaldy
+* Attempt at getting keyboard events working more efficiently and precise
+	* Quick press of 'W' still results in key hold events
+
 ##### 13/10/2019 - dunkybaldy
 * Sorted out event system with a bit of maintenance and slight improvements
 	* Better definitions of events (more specific)
