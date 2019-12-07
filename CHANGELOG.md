@@ -1,5 +1,9 @@
 ### Monogame Engine Changelog
 
+##### 07/12/2019 - dunkybaldy
+* Add some game logic in a separate project so it could be reused by any other game
+	* Inherit from the classes in the project if a different implementation is required
+
 ##### 26/10/2019 - dunkybaldy
 * Attempt at getting keyboard events working more efficiently and precise
 	* Quick press of 'W' still results in key hold events

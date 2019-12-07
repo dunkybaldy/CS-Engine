@@ -16,8 +16,7 @@ namespace ExampleGame
             // Transient for splitscreen, singleton for 1 entity for all players
             services
                 .AddGameOptions()
-                .AddValidation()
-                .AddSingleton<TestService>();
+                .AddValidation();
 
             return services;
         }
